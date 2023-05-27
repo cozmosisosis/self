@@ -1,1 +1,1 @@
-# DIR for coding practice and projects
+# Directory for coding practice and projects
