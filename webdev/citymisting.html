@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
       integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+      <link rel="stylesheet" href="/citymisting.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
       crossorigin="anonymous"></script>
@@ -15,7 +16,7 @@
   <body class="bg-light">
     <nav class="navbar bg-dark navbar-dark navbar-expand-lg bg-body-tertiary mb-3 pb-3">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#">Misting Our Cities</a>
+        <a class="navbar-brand" disabled>Misting Our Cities</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
           aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -23,37 +24,128 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="https://www.youtube.com/">Leave to Youtube</a>
+              <a class="nav-link active" aria-current="page" href="/index.html">My Homepage</a>
             </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                 aria-expanded="false">
-                Can someone help?
+                Want to know something?
               </a>
               <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">Ive lost my way</a></li>
-                <li><a class="dropdown-item" href="#">...</a></li>
+
                 <li>
-                  <hr class="dropdown-divider">
+                  <button class="btn dropdown-item" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasContactinfo" aria-controls="offcanvasBottom">Fake Contact Info?</button>
                 </li>
-                <li><a class="dropdown-item" href="#">I dont know who I am anymore</a></li>
+
+                <hr class="dropdown-divider">
+
+                <li>
+                  <button class="btn dropdown-item" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasHowIBuiltThis" aria-controls="offcanvasBottom">How I built this</button>
+                </li>
+                <li>
+
+                  <hr class="dropdown-divider">
+
+                </li>
+                <li>
+                  <a class="btn dropdown-item"
+                    href="https://indianexpress.com/article/what-is/what-is-anti-smog-gun/">Idea In Practice (leaves my
+                    website) </a>
+                </li>
               </ul>
             </li>
             <li class="nav-item">
-              <a class="nav-link disabled" aria-disabled="true">Why am I here?</a>
+              <a class="nav-link" href="https://www.youtube.com/">Leave to Youtube</a>
             </li>
           </ul>
           <form action="https://google.com/search" class="d-flex" role="search">
-            <input name="q" class="form-control me-2" type="search" placeholder="Leave already" aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">Search</button>
+            <input name="q" class="form-control me-2" type="search" placeholder="Google Something..."
+              aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Google</button>
           </form>
         </div>
       </div>
     </nav>
-    <div class="alert alert-warning alert-dismissible fade show text-center border border-light shadow-lg mx-5 px-5 shadow-3 rounded" role="alert">
+
+
+
+
+    <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="offcanvasContactinfo"
+      aria-labelledby="offcanvasBottomLabel">
+      <div class="offcanvas-header">
+        <h4 class="offcanvas-title" id="offcanvasBottomLabel">Fake Contact Info</h4>
+        <tr></tr>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body small row border-top mx-3">
+        <h5 class="col text-center">Phone Number
+          <p class="text-muted my-3 fs-6">+1 (800) 867 5309</p>
+        </h5>
+        <h5 class="col text-center">Email
+          <p class="text-muted my-3 fs-6">mikesbigburgers@lotsofburgers.com</p>
+        </h5>
+        <h5 class="col text-center">Mailing Address
+          <p class="text-muted my-3 fs-6">5900 Camel Way, New Brunswic, TN 55111</p>
+        </h5>
+      </div>
+    </div>
+
+
+    <div class="offcanvas offcanvas-bottom text-bg-dark" tabindex="-1" id="offcanvasHowIBuiltThis"
+      aria-labelledby="offcanvasBottomLabel">
+      <div class="offcanvas-header">
+        <h4 class="offcanvas-title mx-auto" id="offcanvasBottomLabel">How I Built This Webpage</h4>
+        <tr></tr>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body small row border-top mx-3">
+        <h5 class="col-12 col-md-4 text-center">
+          <a class="text-decoration-none" href="https://cs50.harvard.edu/x/2023/">Harvards CS50X</a>
+          <p class="fs-6 fw-light my-2">
+            CS50X is a online course provided by Harvard that is a free intro course into computer science.
+            This course is amazingly structured and taught, and it has guided me and helped me develop a passion for the
+            field.
+            I believe if anyone has a slight intrest in the subject to just look up there videos on youtube and give
+            them a shot.
+            The energy of the main teacher, David J. Malan, was captivating and helped motivate me to learn more and
+            continue on in the course.
+          </p>
+        </h5>
+        <h5 class="col-12 col-md-4 text-center">
+          <a href="https://getbootstrap.com/docs/5.3/getting-started/introduction/"
+            class="text-decoration-none">Bootstrap</a>
+          <p class="fs-6 fw-light my-2">
+            I built my first website with vanillia HTML, CSS, and JavaScript and
+            I developed an understaning of the complexity of website design and how dificult it can be to get your idea
+            on the page when starting from the ground up.
+            Bootstrap is a CSS frame work, which essentially is premade styles for the elements of your webpage. This
+            tool and tools like it allow you to build website
+            much more efficiently. Dont re-invent the wheel if you dont have to.
+          </p>
+        </h5>
+        <h5 class="col-12 col-md-4 text-center">
+          Independent Research
+          <p class="fs-6 fw-light my-2">
+            Independent research has become a major part of my progression. Either due to a problem I am unable to
+            figure out or just simple curiosity. Self teaching is one of the greatest abilities
+            one can have especially durring the age of the internet. Not to say it is the best form of learning, I
+            believe that is far from true. But there will not always be someone to teach you
+            what you want or to the standard you need. Being either YouTube videos or reading the documentation of what
+            you are using. Learning to find answers on my own has
+            been one of the most usefull skills I have developed.
+          </p>
+        </h5>
+      </div>
+    </div>
+
+
+
+
+    <div
+      class="alert alert-warning alert-dismissible fade show text-center border border-light shadow-lg mx-5 px-5 shadow-3 rounded"
+      role="alert">
       <p class="m-3">
         Lorem, ipsum dolor sit amet
         consectetur adipisicing elit. Soluta possimus voluptatem incidunt, eligendi facere nisi similique dolore!
@@ -149,47 +241,108 @@
         </div>
       </div>
     </div>
+
+
+
+
     <footer class="bd-footer bg-white text-dark py-5 mt-5">
       <div style="margin-left: 10%; margin-right: 10%;">
         <div class="row justify-content-center">
           <div class="col text-center">
             <p class="fw-bold">Maybe copyright</p>
-            <div class="row justify-content-center text-muted">Microsoft</div>
-            <div class="row justify-content-center text-muted">Amazon</div>
-            <div class="row justify-content-center text-muted">Google</div>
+            <div class="row justify-content-center text-muted"><a class="text-decoration-none"
+                href="https://www.microsoft.com/en-us/">Microsoft</a></div>
+            <div class="row justify-content-center text-muted"><a class="text-decoration-none"
+                href="https://www.amazon.com/?tag=hymsabk-20&ref=pd_sl_290dlthsvm_e&adgrpid=1341404752168026&hvadid=83837868246770&hvnetw=o&hvqmt=e&hvbmt=be&hvdev=c&hvlocint=&hvlocphy=80328&hvtargid=kwd-83838147155260:loc-190&hydadcr=28884_11845479">Amazon</a>
+            </div>
+            <div class="row justify-content-center text-muted"><a class="text-decoration-none"
+                href="https://www.apple.com/store?afid=p238%7CHNR4YAAe-dc_mtid_1870765e38482_pcrid_77653217025573_pgrid_2053191216_pntwk_o_pchan__pexid__&cid=aos-us-kwbi-brand-apple--slid---product-">Apple</a>
+            </div>
             <div class="row justify-content-center text-muted">
               <p>
-                ChatPPT
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-robot" viewBox="0 0 16 16">
-                  <path d="M6 12.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5ZM3 8.062C3 6.76 4.235 5.765 5.53 5.886a26.58 26.58 0 0 0 4.94 0C11.765 5.765 13 6.76 13 8.062v1.157a.933.933 0 0 1-.765.935c-.845.147-2.34.346-4.235.346-1.895 0-3.39-.2-4.235-.346A.933.933 0 0 1 3 9.219V8.062Zm4.542-.827a.25.25 0 0 0-.217.068l-.92.9a24.767 24.767 0 0 1-1.871-.183.25.25 0 0 0-.068.495c.55.076 1.232.149 2.02.193a.25.25 0 0 0 .189-.071l.754-.736.847 1.71a.25.25 0 0 0 .404.062l.932-.97a25.286 25.286 0 0 0 1.922-.188.25.25 0 0 0-.068-.495c-.538.074-1.207.145-1.98.189a.25.25 0 0 0-.166.076l-.754.785-.842-1.7a.25.25 0 0 0-.182-.135Z"/>
-                  <path d="M8.5 1.866a1 1 0 1 0-1 0V3h-2A4.5 4.5 0 0 0 1 7.5V8a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1v1a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-1a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1v-.5A4.5 4.5 0 0 0 10.5 3h-2V1.866ZM14 7.5V13a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7.5A3.5 3.5 0 0 1 5.5 4h5A3.5 3.5 0 0 1 14 7.5Z"/>
-                </svg>
+                <a href="https://openai.com/blog/chatgpt" class="text-decoration-none">
+
+                  ChatPPT
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-robot"
+                    viewBox="0 0 16 16">
+                    <path
+                      d="M6 12.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5ZM3 8.062C3 6.76 4.235 5.765 5.53 5.886a26.58 26.58 0 0 0 4.94 0C11.765 5.765 13 6.76 13 8.062v1.157a.933.933 0 0 1-.765.935c-.845.147-2.34.346-4.235.346-1.895 0-3.39-.2-4.235-.346A.933.933 0 0 1 3 9.219V8.062Zm4.542-.827a.25.25 0 0 0-.217.068l-.92.9a24.767 24.767 0 0 1-1.871-.183.25.25 0 0 0-.068.495c.55.076 1.232.149 2.02.193a.25.25 0 0 0 .189-.071l.754-.736.847 1.71a.25.25 0 0 0 .404.062l.932-.97a25.286 25.286 0 0 0 1.922-.188.25.25 0 0 0-.068-.495c-.538.074-1.207.145-1.98.189a.25.25 0 0 0-.166.076l-.754.785-.842-1.7a.25.25 0 0 0-.182-.135Z" />
+                    <path
+                      d="M8.5 1.866a1 1 0 1 0-1 0V3h-2A4.5 4.5 0 0 0 1 7.5V8a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1v1a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-1a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1v-.5A4.5 4.5 0 0 0 10.5 3h-2V1.866ZM14 7.5V13a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7.5A3.5 3.5 0 0 1 5.5 4h5A3.5 3.5 0 0 1 14 7.5Z" />
+                  </svg>
               </p>
+              </a>
             </div>
           </div>
           <div class="col text-center">
             <p class="fw-bold">Possibly contact info</p>
-            <div class="row justify-content-center text-muted">Phone Number</div>
-            <div class="row justify-content-center text-muted">Email</div>
-            <div class="row justify-content-center text-muted">Snapchat</div>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-facebook" viewBox="0 0 16 16">
-              <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/>
-            </svg>
+            <div class="row justify-content-center text-muted">
+              <a href="https://www.gmail.com" class="text-decoration-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                  class="bi bi-envelope-at" viewBox="0 0 16 16">
+                  <path
+                    d="M2 2a2 2 0 0 0-2 2v8.01A2 2 0 0 0 2 14h5.5a.5.5 0 0 0 0-1H2a1 1 0 0 1-.966-.741l5.64-3.471L8 9.583l7-4.2V8.5a.5.5 0 0 0 1 0V4a2 2 0 0 0-2-2H2Zm3.708 6.208L1 11.105V5.383l4.708 2.825ZM1 4.217V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v.217l-7 4.2-7-4.2Z" />
+                  <path
+                    d="M14.247 14.269c1.01 0 1.587-.857 1.587-2.025v-.21C15.834 10.43 14.64 9 12.52 9h-.035C10.42 9 9 10.36 9 12.432v.214C9 14.82 10.438 16 12.358 16h.044c.594 0 1.018-.074 1.237-.175v-.73c-.245.11-.673.18-1.18.18h-.044c-1.334 0-2.571-.788-2.571-2.655v-.157c0-1.657 1.058-2.724 2.64-2.724h.04c1.535 0 2.484 1.05 2.484 2.326v.118c0 .975-.324 1.39-.639 1.39-.232 0-.41-.148-.41-.42v-2.19h-.906v.569h-.03c-.084-.298-.368-.63-.954-.63-.778 0-1.259.555-1.259 1.4v.528c0 .892.49 1.434 1.26 1.434.471 0 .896-.227 1.014-.643h.043c.118.42.617.648 1.12.648Zm-2.453-1.588v-.227c0-.546.227-.791.573-.791.297 0 .572.192.572.708v.367c0 .573-.253.744-.564.744-.354 0-.581-.215-.581-.8Z" />
+                </svg>
+              </a>
+            </div>
+            <div class="row justify-content-center text-muted">
+              <a href="https://www.snapchat.com/" class="text-decoration-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                  class="bi bi-snapchat" viewBox="0 0 16 16">
+                  <path
+                    d="M15.943 11.526c-.111-.303-.323-.465-.564-.599a1.416 1.416 0 0 0-.123-.064l-.219-.111c-.752-.399-1.339-.902-1.746-1.498a3.387 3.387 0 0 1-.3-.531c-.034-.1-.032-.156-.008-.207a.338.338 0 0 1 .097-.1c.129-.086.262-.173.352-.231.162-.104.289-.187.371-.245.309-.216.525-.446.66-.702a1.397 1.397 0 0 0 .069-1.16c-.205-.538-.713-.872-1.329-.872a1.829 1.829 0 0 0-.487.065c.006-.368-.002-.757-.035-1.139-.116-1.344-.587-2.048-1.077-2.61a4.294 4.294 0 0 0-1.095-.881C9.764.216 8.92 0 7.999 0c-.92 0-1.76.216-2.505.641-.412.232-.782.53-1.097.883-.49.562-.96 1.267-1.077 2.61-.033.382-.04.772-.036 1.138a1.83 1.83 0 0 0-.487-.065c-.615 0-1.124.335-1.328.873a1.398 1.398 0 0 0 .067 1.161c.136.256.352.486.66.701.082.058.21.14.371.246l.339.221a.38.38 0 0 1 .109.11c.026.053.027.11-.012.217a3.363 3.363 0 0 1-.295.52c-.398.583-.968 1.077-1.696 1.472-.385.204-.786.34-.955.8-.128.348-.044.743.28 1.075.119.125.257.23.409.31a4.43 4.43 0 0 0 1 .4.66.66 0 0 1 .202.09c.118.104.102.26.259.488.079.118.18.22.296.3.33.229.701.243 1.095.258.355.014.758.03 1.217.18.19.064.389.186.618.328.55.338 1.305.802 2.566.802 1.262 0 2.02-.466 2.576-.806.227-.14.424-.26.609-.321.46-.152.863-.168 1.218-.181.393-.015.764-.03 1.095-.258a1.14 1.14 0 0 0 .336-.368c.114-.192.11-.327.217-.42a.625.625 0 0 1 .19-.087 4.446 4.446 0 0 0 1.014-.404c.16-.087.306-.2.429-.336l.004-.005c.304-.325.38-.709.256-1.047Zm-1.121.602c-.684.378-1.139.337-1.493.565-.3.193-.122.61-.34.76-.269.186-1.061-.012-2.085.326-.845.279-1.384 1.082-2.903 1.082-1.519 0-2.045-.801-2.904-1.084-1.022-.338-1.816-.14-2.084-.325-.218-.15-.041-.568-.341-.761-.354-.228-.809-.187-1.492-.563-.436-.24-.189-.39-.044-.46 2.478-1.199 2.873-3.05 2.89-3.188.022-.166.045-.297-.138-.466-.177-.164-.962-.65-1.18-.802-.36-.252-.52-.503-.402-.812.082-.214.281-.295.49-.295a.93.93 0 0 1 .197.022c.396.086.78.285 1.002.338.027.007.054.01.082.011.118 0 .16-.06.152-.195-.026-.433-.087-1.277-.019-2.066.094-1.084.444-1.622.859-2.097.2-.229 1.137-1.22 2.93-1.22 1.792 0 2.732.987 2.931 1.215.416.475.766 1.013.859 2.098.068.788.009 1.632-.019 2.065-.01.142.034.195.152.195a.35.35 0 0 0 .082-.01c.222-.054.607-.253 1.002-.338a.912.912 0 0 1 .197-.023c.21 0 .409.082.49.295.117.309-.04.56-.401.812-.218.152-1.003.638-1.18.802-.184.169-.16.3-.139.466.018.14.413 1.991 2.89 3.189.147.073.394.222-.041.464Z" />
+                </svg>
+              </a>
+            </div>
+            <div class="row justify-content-center text-muted">
+              <a href="https://www.facebook.com/" class="text-decoration-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                  class="bi bi-facebook" viewBox="0 0 16 16">
+                  <path
+                    d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z" />
+                </svg>
+              </a>
+            </div>
 
           </div>
           <div class="col text-center">
             <p class="fw-bold">Could be sources</p>
-            <div class="row justify-content-center text-muted">WikiLeaks</div>
-            <div class="row justify-content-center text-muted">DarkGoogle</div>
-            <div class="row justify-content-center text-muted">Cox News</div>
+
             <div class="row justify-content-center text-muted">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-twitter-x" viewBox="0 0 16 16">
-                <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865l8.875 11.633Z"/>
-              </svg>
+              <a href="https://www.wikipedia.org/" class="text-decoration-none">WikiLeaks</a>
+            </div>
+            <div class="row justify-content-center text-muted">
+              <a href="https://www.cnet.com/news/" class="text-decoration-none">Cox news</a>
+
+            </div>
+            <div class="row justify-content-center text-muted">
+              <a href="https://twitter.com/i/flow/login?redirect_after_login=%2Fintent%2Flike%3Ftweet_id%3D1409509220987420675%26ref_src%3Dtwsrc%255Etfw%257Ctwcamp%255Eembeddedtimeline%257Ctwterm%255Escreen-name%253Abstategames%257Ctwcon%255Es1"
+                class="text-decoration-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                  class="bi bi-twitter-x" viewBox="0 0 16 16">
+                  <path
+                    d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865l8.875 11.633Z" />
+                </svg>
+              </a>
             </div>
           </div>
         </div>
       </div>
+
+      <footer class="bd-footer text-muted">
+        <p class="text-center" style="font-size: 1vh;">
+          It is illegal for legal action to be taken against this page for illegal maters of legality. Our
+          representatives know the legality of all legal and illegal matters with in the law.
+          Any attempte to subvert there authority will be deamed as illegal and prosecuted to the full extent of the
+          courts justice system. Any attempt to contact us or our representatives
+          shall be made with a small payment of no less than $1,000,000 and no more than $1,000,000. Any attempt not
+          meeting this requirement will be seen in court for failure to uphold business
+          standards.
+
+        </p>
+      </footer>
     </footer>
   </body>
 
