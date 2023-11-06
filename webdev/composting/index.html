@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+        <link rel="stylesheet" href="styles.css">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+            crossorigin="anonymous"></script>
+        <title>Composte</title>
+    </head>
+
+    <body>
+
+        <div class="custom_loading" style="" id="custom_loading_page">
+            <div class="container text-center" style="height: 100vh; display: flex; justify-content: center;">
+                <div class="" style="margin-top: 40vh; width: fit-content; ">
+                    <div id="loading_img_frame">
+                        <div id="loading_img">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="page_content" style="display: none;">
+            <div class="navbar mb-5">
+                <div class="container-fluid flex-column flex-lg-row align-items-start align-items-sm-center w-100">
+
+                    <div class="row d-inline d-sm-flex me-auto ms-auto ms-lg-0">
+
+                        <div class="d-flex" style="width: 200px;">
+                            <div class="ms-sm-5 mb-4" style="width: 30px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                                    class="bi bi-apple" viewBox="0 0 16 16" style="position: relative; top: 10px;">
+                                    <path
+                                        d="M11.182.008C11.148-.03 9.923.023 8.857 1.18c-1.066 1.156-.902 2.482-.878 2.516.024.034 1.52.087 2.475-1.258.955-1.345.762-2.391.728-2.43Zm3.314 11.733c-.048-.096-2.325-1.234-2.113-3.422.212-2.189 1.675-2.789 1.698-2.854.023-.065-.597-.79-1.254-1.157a3.692 3.692 0 0 0-1.563-.434c-.108-.003-.483-.095-1.254.116-.508.139-1.653.589-1.968.607-.316.018-1.256-.522-2.267-.665-.647-.125-1.333.131-1.824.328-.49.196-1.422.754-2.074 2.237-.652 1.482-.311 3.83-.067 4.56.244.729.625 1.924 1.273 2.796.576.984 1.34 1.667 1.659 1.899.319.232 1.219.386 1.843.067.502-.308 1.408-.485 1.766-.472.357.013 1.061.154 1.782.539.571.197 1.111.115 1.652-.105.541-.221 1.324-1.059 2.238-2.758.347-.79.505-1.217.473-1.282Z" />
+                                    <path
+                                        d="M11.182.008C11.148-.03 9.923.023 8.857 1.18c-1.066 1.156-.902 2.482-.878 2.516.024.034 1.52.087 2.475-1.258.955-1.345.762-2.391.728-2.43Zm3.314 11.733c-.048-.096-2.325-1.234-2.113-3.422.212-2.189 1.675-2.789 1.698-2.854.023-.065-.597-.79-1.254-1.157a3.692 3.692 0 0 0-1.563-.434c-.108-.003-.483-.095-1.254.116-.508.139-1.653.589-1.968.607-.316.018-1.256-.522-2.267-.665-.647-.125-1.333.131-1.824.328-.49.196-1.422.754-2.074 2.237-.652 1.482-.311 3.83-.067 4.56.244.729.625 1.924 1.273 2.796.576.984 1.34 1.667 1.659 1.899.319.232 1.219.386 1.843.067.502-.308 1.408-.485 1.766-.472.357.013 1.061.154 1.782.539.571.197 1.111.115 1.652-.105.541-.221 1.324-1.059 2.238-2.758.347-.79.505-1.217.473-1.282Z" />
+                                </svg>
+                            </div>
+
+                            <div style="width: 30px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                                    class="bi bi-arrow-right" viewBox="0 0 16 16"
+                                    style="position: relative; top: 10px;">
+                                    <path fill-rule="evenodd"
+                                        d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
+                                </svg>
+                            </div>
+
+                            <div style="width: 30px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                                    class="bi bi-trash " viewBox="0 0 16 16" style="position: relative; top: 10px;">
+                                    <path
+                                        d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z" />
+                                    <path
+                                        d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z" />
+                                </svg>
+                            </div>
+
+                            <div style="width: 30px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                                    class=" bi bi-x-circle mx-3" viewBox="0 0 16 16"
+                                    style="position: relative; top: 10px;">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                                    <path
+                                        d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                                </svg>
+                            </div>
+                        </div>
+
+
+
+
+                        <div class="d-flex" style="width: 200px;">
+
+                            <div class="ms-sm-5 mb-4" style="width: 30px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                                    class="bi bi-apple" viewBox="0 0 16 16" style="position: relative; top: 10px;">
+                                    <path
+                                        d="M11.182.008C11.148-.03 9.923.023 8.857 1.18c-1.066 1.156-.902 2.482-.878 2.516.024.034 1.52.087 2.475-1.258.955-1.345.762-2.391.728-2.43Zm3.314 11.733c-.048-.096-2.325-1.234-2.113-3.422.212-2.189 1.675-2.789 1.698-2.854.023-.065-.597-.79-1.254-1.157a3.692 3.692 0 0 0-1.563-.434c-.108-.003-.483-.095-1.254.116-.508.139-1.653.589-1.968.607-.316.018-1.256-.522-2.267-.665-.647-.125-1.333.131-1.824.328-.49.196-1.422.754-2.074 2.237-.652 1.482-.311 3.83-.067 4.56.244.729.625 1.924 1.273 2.796.576.984 1.34 1.667 1.659 1.899.319.232 1.219.386 1.843.067.502-.308 1.408-.485 1.766-.472.357.013 1.061.154 1.782.539.571.197 1.111.115 1.652-.105.541-.221 1.324-1.059 2.238-2.758.347-.79.505-1.217.473-1.282Z" />
+                                    <path
+                                        d="M11.182.008C11.148-.03 9.923.023 8.857 1.18c-1.066 1.156-.902 2.482-.878 2.516.024.034 1.52.087 2.475-1.258.955-1.345.762-2.391.728-2.43Zm3.314 11.733c-.048-.096-2.325-1.234-2.113-3.422.212-2.189 1.675-2.789 1.698-2.854.023-.065-.597-.79-1.254-1.157a3.692 3.692 0 0 0-1.563-.434c-.108-.003-.483-.095-1.254.116-.508.139-1.653.589-1.968.607-.316.018-1.256-.522-2.267-.665-.647-.125-1.333.131-1.824.328-.49.196-1.422.754-2.074 2.237-.652 1.482-.311 3.83-.067 4.56.244.729.625 1.924 1.273 2.796.576.984 1.34 1.667 1.659 1.899.319.232 1.219.386 1.843.067.502-.308 1.408-.485 1.766-.472.357.013 1.061.154 1.782.539.571.197 1.111.115 1.652-.105.541-.221 1.324-1.059 2.238-2.758.347-.79.505-1.217.473-1.282Z" />
+                                </svg>
+                            </div>
+
+                            <div style="width: 30px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                                    class="bi bi-arrow-right" viewBox="0 0 16 16"
+                                    style="position: relative; top: 10px;">
+                                    <path fill-rule="evenodd"
+                                        d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
+                                </svg>
+                            </div>
+
+                            <div style="width: 30px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                                    class="bi bi-fuel-pump-fill" viewBox="0 0 16 16"
+                                    style="position: relative; top: 10px;">
+                                    <path
+                                        d="M1 2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v8a2 2 0 0 1 2 2v.5a.5.5 0 0 0 1 0V8h-.5a.5.5 0 0 1-.5-.5V4.375a.5.5 0 0 1 .5-.5h1.495c-.011-.476-.053-.894-.201-1.222a.97.97 0 0 0-.394-.458c-.184-.11-.464-.195-.9-.195a.5.5 0 0 1 0-1c.564 0 1.034.11 1.412.336.383.228.634.551.794.907.295.655.294 1.465.294 2.081V7.5a.5.5 0 0 1-.5.5H15v4.5a1.5 1.5 0 0 1-3 0V12a1 1 0 0 0-1-1v4h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1V2Zm2.5 0a.5.5 0 0 0-.5.5v5a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 .5-.5v-5a.5.5 0 0 0-.5-.5h-5Z" />
+                                </svg>
+                            </div>
+
+                            <div style="width: 30px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                                    class="bi bi-check-circle mx-3" viewBox="0 0 16 16"
+                                    style="position: relative; top: 10px;">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                                    <path
+                                        d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="d-inline col-12 col-sm-auto">
+
+                        <ul class="nav nav-pills flex-column flex-sm-row mx-3">
+
+                            <ul class="nav nav-pills flex-column flex-sm-row my-4 my-sm-0 me-sm-4">
+                                <li>
+                                    <button class="nav-link active nav-link-color" id="pills-intro-content-tab"
+                                        data-bs-toggle="pill" data-bs-target="#pills-intro-content" type="button"
+                                        role="tab" aria-controls="pills-intro-content" aria-selected="true"
+                                        style="width: 100%;">Intro
+                                        Content</button>
+                                </li>
+                                <li>
+                                    <button class="nav-link nav-link-color" id="pills-waste-content-tab"
+                                        data-bs-toggle="pill" data-bs-target="#pills-waste-content" type="button"
+                                        role="tab" aria-controls="pills-waste-content" aria-selected="true"
+                                        style="width: 100%;">Waste</button>
+                                </li>
+                                <li>
+                                    <button class="nav-link nav-link-color" id="pills-biofuel-content-tab"
+                                        data-bs-toggle="pill" data-bs-target="#pills-biofuel-content" type="button"
+                                        role="tab" aria-controls="pills-biofuel-content" aria-selected="true"
+                                        style="width: 100%;">Biofuel</button>
+                                </li>
+                            </ul>
+                            <a href="../homepage/index.html" class="btn text-decoration-none home-page-btn">Back to Home
+                                Page</a>
+                        </ul>
+
+                    </div>
+
+                </div>
+            </div>
+
+
+
+            <div class="justify-content-center">
+                <div class="tab-content" id="pills-tabContent">
+
+                    <div class="tab-pane fade show active" id="pills-intro-content" role="tabpanel"
+                        aria-labelledby="pills-intro-content-tab" tabindex="0">
+
+                        <div class="container">
+                            <h3 class="text-center body_text_color">
+                                Nation wide food Recycling initiative
+                            </h3>
+                        </div>
+
+                        <div class="imgframe" id="bannerimgframe">
+                            <img class="bannerimg_field" id="bannerimg"
+                                src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1932&q=80"
+                                alt="crop field">
+                        </div>
+
+                        <p class="placeholder-glow" id="banner_placeholder">
+                            <span class="placeholder customeplaceholderstyling"></span>
+                        </p>
+
+
+
+                        <div class="container mb-5">
+                            <p class="text-center fs-5">
+                                PPLorem ipsum, dolor sit amet consectetur adipisicing elit. Ex quos doloribus omnis
+                                beatae
+                                delectus hic, quo praesentium ipsa dolore! Debitis optio tempore commodi. Explicabo
+                                debitis
+                                aperiam quaerat officia atque saepe, deserunt ipsum quisquam reprehenderit eaque ullam
+                                qui
+                                consectetur libero deleniti in veritatis. Porro perferendis, delectus eveniet dolore
+                                dolor
+                                fuga
+                                necessitatibus.
+                            </p>
+                        </div>
+
+                        <div class="container">
+
+                            <div class="card m-3">
+                                <div class="row g-0">
+                                    <div class="col-md-5" style="">
+                                        <img src="https://source.unsplash.com/random/300x300?sig=1" class="rounded"
+                                            alt="suposed to be"
+                                            style="object-fit: cover; width: 100%; max-height: 300px;">
+
+                                    </div>
+                                    <div class="col-md-7 d-flex my-auto">
+                                        <div class="card-body">
+                                            <p class="card-text text-center fw-semibold lh-lg-lg mx-3" style="">
+                                                This is a wider card with supporting
+                                                text below as a
+                                                natural lead-in to additional content. This content is a little bit
+                                                longer.o additional content. This content is a little bit
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+
+
+
+
+                            <div class="row justify-content-end">
+                                <div class="fs-3 text-center p-5 fw-bolder" style="background-color: #EFCB68;">
+                                    What shall you do when you find the food is nolonger edible? Shal you bury it again
+                                    and
+                                    hope it grows?
+                                </div>
+                            </div>
+
+
+                            <div class="card m-3">
+                                <div class="row g-0">
+                                    <div class="col-md-7 d-flex my-auto" style="">
+
+
+                                        <div class="card-body d-none d-xxl-block">
+                                            <h5 class="card-title">Card title of card 2 with "responsive" sizing (lrg)
+                                            </h5>
+                                            <p class="card-text">
+                                            <ul>
+                                                <li class="fw-bold">bad</li>
+                                                <p>
+                                                    This is a wider card with supporting text below as a
+                                                    natural lead-in to additional content. This content is a little bit
+                                                    longer.
+                                                </p>
+
+                                                <li class="fw-bold">good</li>
+                                                <p>
+                                                    This is a wider card with supporting text below as a
+                                                    natural lead-in to additional content.
+                                                </p>
+
+                                                <li class="fw-bold">ugly</li>
+                                                <p>
+                                                    This is a wider card with supporting text below as a
+                                                    natural lead-in to additional content.
+                                                </p>
+
+                                            </ul>
+                                            </p>
+                                        </div>
+
+
+                                        <div class="card-body d-block d-xxl-none">
+                                            <h5 class="card-title fw-bold" style="font-size: 15px;"> Card title of card
+                                                2 with "responsive" sizing (sml)</h5>
+                                            <p class="card-text">
+                                            <ul>
+                                                <li class="fw-bold">bad</li>
+                                                <p style="font-size: 10px;">
+                                                    This is a wider card with supporting text below as a
+                                                    natural lead-in to additional content. This content is a little bit
+                                                    longer.
+                                                </p>
+
+                                                <li class="fw-bold">good</li>
+                                                <p style="font-size: 10px;">
+                                                    This is a wider card with supporting text below as a
+                                                    natural lead-in to additional content.
+                                                </p>
+
+                                                <li class="fw-bold">ugly</li>
+                                                <p style="font-size: 10px;">
+                                                    This is a wider card with supporting text below as a
+                                                    natural lead-in to additional content.
+                                                </p>
+
+                                            </ul>
+                                            </p>
+                                        </div>
+
+
+                                    </div>
+                                    <div class="col-md-5">
+                                        <img src="https://source.unsplash.com/random/300x300?sig=2" class="rounded"
+                                            alt="suposed to be"
+                                            style="object-fit: cover; width: 100%; max-height: 300px;">
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="row justify-content-end">
+                                <div class="fs-3 text-center p-5 fw-bolder" style="background-color: #FE5F55;">
+                                    What shall you do when you find the food is nolonger edible? Shal you bury it again
+                                    and
+                                    hope it grows?
+                                </div>
+                            </div>
+
+                            <div class="card m-3">
+                                <div class="row g-0">
+                                    <div class="col-md-3">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-center">Card title of card 3</h5>
+                                            <p class="card-text">This is a wider card with supporting text below as a
+                                                natural lead-in to additional content. This content is a little bit
+                                                longer.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <img src="https://source.unsplash.com/random/300x300?sig=3" class=""
+                                            alt="suposed to be"
+                                            style="object-fit: cover; width: 100%; max-height: 300px;">
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Card title of card 3 pt2</h5>
+                                            <p class="card-text">This is a wider card with supporting text below as a
+                                                natural lead-in to additional content. This content is a little bit
+                                                longer.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+
+
+
+
+
+                    <div class="tab-pane fade" id="pills-waste-content" role="tabpanel"
+                        aria-labelledby="pills-waste-content-tab" tabindex="0">
+
+                        <div class="container">
+                            <h3 class="text-center body_text_color">
+                                Waste and stuff
+                            </h3>
+                        </div>
+
+                        <div class="imgframe" id="bannerimgframe">
+                            <img class="bannerimg_dump" id="bannerimg"
+                                src="https://plus.unsplash.com/premium_photo-1663099654523-d3862b7742cd?auto=format&fit=crop&q=80&w=2070&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                                alt="trash dump">
+                        </div>
+
+                        <p class="placeholder-glow" id="banner_placeholder" style="visibility: hidden;">
+                            <span class="placeholder customeplaceholderstyling"></span>
+                        </p>
+
+
+                        <div class="w-100 shadow">
+
+                            <div class="container">
+                                <p class="text-center fs-5">
+                                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aut porro pariatur vitae
+                                    quod
+                                    ratione ipsa voluptates esse quam quibusdam a?
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="container mt-5">
+
+
+
+
+                            <div class="d-md-none">
+                                <img src="https://source.unsplash.com/random/?sig=4" alt="" class=""
+                                    style="object-fit: cover; height: 300px; width: 100%;">
+
+                                <div style="display: flex; align-items: center;">
+                                    <p class="text-center m-3" style=" font-size: 1.1em;">Lorem
+                                        ipsum,
+                                        dolor sit amet
+                                        consectetur adipisicing
+                                        elit. Sunt aspernatur ipsam sequi animi sint eaque quos a nisi
+                                        recusandae
+                                        nobis.</p>
+                                </div>
+
+                                <img src="https://source.unsplash.com/random/?sig=6" alt="" class=""
+                                    style="object-fit: cover; height: 300px; width: 100%;">
+
+                                <div style="display: flex; align-items: center;">
+                                    <p class="text-center m-3" style=" font-size: 1.1em;">Lorem
+                                        ipsum,
+                                        dolor sit amet
+                                        consectetur adipisicing
+                                        elit. Sunt aspernatur ipsam sequi animi sint eaque quos a nisi
+                                        recusandae
+                                        nobis.</p>
+                                </div>
+
+                            </div>
+
+
+
+                            <div class="row d-none d-md-flex d-lg-none" style="height: 600px;">
+                                <div class="col-6 p-0 h-100">
+                                    <div class="h-50 " style="display: flex; align-items: center;">
+                                        <p class="text-center my-auto mx-3" style="font-size: 1.5em;">Lorem ipsum,
+                                            dolor sit amet
+                                            consectetur adipisicing
+                                            elit. Sunt aspernatur ipsam sequi animi sint eaque quos a nisi
+                                            recusandae
+                                            nobis.</p>
+                                    </div>
+                                    <div class="h-50">
+                                        <img src="https://source.unsplash.com/random/?sig=4" alt="" class=""
+                                            style="object-fit: cover; height: 100%; width: 100%;">
+                                    </div>
+                                </div>
+
+
+
+
+                                <div class="col-6 p-0 h-100">
+                                    <div class="h-50">
+                                        <img src="https://source.unsplash.com/random/?sig=6" alt="" class=""
+                                            style="object-fit: cover; height: 100%; width: 100%;">
+                                    </div>
+
+                                    <div class="h-50 " style="display: flex; align-items: center;">
+                                        <p class="text-center my-auto mx-3" style="font-size: 1.5em;">Lorem ipsum,
+                                            dolor sit amet
+                                            consectetur adipisicing
+                                            elit. Sunt aspernatur ipsam sequi animi sint eaque quos a nisi
+                                            recusandae
+                                            nobis.</p>
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+
+
+                            <div class="row d-none d-lg-flex d-xxl-none" style="height: 600px;">
+                                <div class="col-2 shadow p-0">
+                                    <img src="https://source.unsplash.com/random/?sig=4" alt="" class=""
+                                        style="object-fit: cover; height: 100%; width: 100%;">
+                                </div>
+                                <div class="col-8 p-0 h-100">
+                                    <div class="h-50" style="display: flex; align-items: center;">
+                                        <div style="align-items: center;">
+                                            <p class="text-center m-3 h-100" style="font-size: 1.5em;">Lorem ipsum,
+                                                dolor sit amet
+                                                consectetur adipisicing
+                                                elit. Sunt aspernatur ipsam sequi animi sint eaque quos a nisi
+                                                recusandae
+                                                nobis.</p>
+                                        </div>
+
+                                        <div style="align-items: center;">
+                                            <p class="text-center m-3 h-100" style="font-size: 1.5em;">Lorem ipsum,
+                                                dolor sit amet
+                                                consectetur adipisicing
+                                                elit. Sunt aspernatur ipsam sequi animi sint eaque quos a nisi
+                                                recusandae
+                                                nobis.</p>
+                                        </div>
+                                    </div>
+                                    <div class="shadow h-50 p-0">
+                                        <img src="https://source.unsplash.com/random/?sig=5" alt="" class=""
+                                            style="object-fit: cover; height: 100%; width: 100%;">
+                                    </div>
+                                </div>
+                                <div class="col-2 shadow p-0">
+                                    <img src="https://source.unsplash.com/random/?sig=6" alt="" class=""
+                                        style="object-fit: cover; height: 100%; width: 100%;">
+                                </div>
+
+                            </div>
+
+
+
+
+                            <div class="row justify-content-between d-none d-xxl-flex" style="height: 600px;">
+                                <div class="col-4 p-0 h-100">
+                                    <div class="shadow h-50 p-0">
+                                        <img src="https://source.unsplash.com/random/?sig=3" alt="" class=""
+                                            style="object-fit: cover; height: 100%; width: 100%;">
+                                    </div>
+                                    <div class="h-50" style="display: flex; align-items: center;">
+                                        <p class="text-center m-3" style="font-size: 1.5em;">Lorem ipsum, dolor sit amet
+                                            consectetur adipisicing
+                                            elit. Sunt aspernatur ipsam sequi animi sint eaque quos a nisi recusandae
+                                            nobis.</p>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-2 shadow p-0">
+                                    <img src="https://source.unsplash.com/random/?sig=4" alt="" class=""
+                                        style="object-fit: cover; height: 100%; width: 100%;">
+                                </div>
+
+
+                                <div class="col-4 p-0 h-100">
+                                    <div class="h-50" style="display: flex; align-items: center;">
+                                        <p class="text-center m-3" style="font-size: 1.5em;">Lorem ipsum, dolor sit amet
+                                            consectetur adipisicing
+                                            elit. Sunt aspernatur ipsam sequi animi sint eaque quos a nisi recusandae
+                                            nobis.</p>
+                                    </div>
+                                    <div class="shadow h-50 p-0">
+                                        <img src="https://source.unsplash.com/random/?sig=5" alt="" class=""
+                                            style="object-fit: cover; height: 100%; width: 100%;">
+                                    </div>
+                                </div>
+
+
+                                <div class="col-2 shadow p-0">
+                                    <img src="https://source.unsplash.com/random/?sig=6" alt="" class=""
+                                        style="object-fit: cover; height: 100%; width: 100%;">
+                                </div>
+                            </div>
+
+
+
+
+
+
+
+                            <div class="row justify-content-end p-5">
+                                <div class="fs-3 text-center p-5 fw-bolder" style="background-color: #D1BCE3;">
+                                    What shall you do when you find the food is nolonger edible? Shal you bury it again
+                                    and
+                                    hope it grows?
+                                </div>
+                            </div>
+
+
+
+                            <div class="row" style="height: 900px; position: relative;">
+
+                                <p id="first_animated_paragraph" class="xxx text-center d-none d-xl-block"
+                                    style="position: absolute; margin-left: auto; margin-right: auto; left: 0; right: 0; top: 5%; width: 400px; opacity: 0%;">
+                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias ratione nemo
+                                    consequuntur fugiat quam quos vitae nulla cumque alias modi?</p>
+                                <p id="second_animated_paragraph" class="text-end d-none d-xl-block"
+                                    style="position: absolute; margin-left: auto; margin-right: auto; right: 0; top: 38%; width: 400px; opacity: 0%;">
+                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias ratione nemo
+                                    consequuntur fugiat quam quos vitae nulla cumque alias modi?</p>
+                                <p id="third_animated_paragraph" class="text-center d-none d-xl-block"
+                                    style="position: absolute; margin-left: auto; margin-right: auto; left: 0; right: 0; top: 55%; width: 400px; opacity: 0%;">
+                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias ratione nemo
+                                    consequuntur fugiat quam quos vitae nulla cumque alias modi?</p>
+
+                                <p id="first_sm_animated_paragraph" class="text-center d-xl-none overflow-hidden"
+                                    style="max-height: 72px; position: absolute; margin-left: auto; margin-right: auto; left: 0; right: 0; top: -2%; width: 80%; opacity: 0%;">
+                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias ratione nemo
+                                    consequuntur fugiat quam quos vitae nulla cumque alias modi?</p>
+                                <p id="second_sm_animated_paragraph" class="text-center d-xl-none overflow-hidden"
+                                    style="max-height: 96px; position: absolute; margin-left: auto; margin-right: auto; left: 0; right: 0; top: 45%; width: 80%; opacity: 0%;">
+                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias ratione nemo
+                                    consequuntur fugiat quam quos vitae nulla cumque alias modi?</p>
+                                <p id="third_sm_animated_paragraph" class="text-center d-xl-none overflow-hidden"
+                                    style="max-height: 72px; position: absolute; margin-left: auto; margin-right: auto; left: 0; right: 0; top: 94%; width: 80%; opacity: 0%;">
+                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias ratione nemo
+                                    consequuntur fugiat quam quos vitae nulla cumque alias modi?</p>
+
+
+                                <div class="d-xl-block col-12 col-lg-10 col-xl-4 h-100 mx-auto">
+                                    <div class="h-50 overflow-hidden d-flex align-items-center" style="">
+                                        <img src="https://source.unsplash.com/random/?sig=9" alt="" class=""
+                                            style="object-fit: cover; height: 300px; width: 100%; visibility: hidden;"
+                                            id="first_img_to_animate">
+                                    </div>
+                                    <div class="h-50 overflow-hidden d-flex align-items-center" style="">
+                                        <img src="https://source.unsplash.com/random/?sig=12" alt="" class=""
+                                            style="object-fit: cover; height: 300px; width: 100%; visibility: hidden;"
+                                            id="second_img_to_animate">
+                                    </div>
+                                </div>
+
+
+                                <div class="d-none d-xl-block col-xl-4 h-100 mx-auto">
+                                    <div class="h-50 overflow-hidden d-flex align-items-end" style="">
+
+                                        <img src="https://source.unsplash.com/random/?sig=8" alt="" class=""
+                                            style="object-fit: cover; height: 300px; width: 100%; visibility: hidden;"
+                                            id="third_img_to_animate">
+                                    </div>
+                                    <div class="h-50 overflow-hidden d-flex align-items-end" style="">
+
+                                        <img src="https://source.unsplash.com/random/?sig=10" alt="" class=""
+                                            style="object-fit: cover; height: 300px; width: 100%; visibility: hidden;"
+                                            id="fourth_img_to_animate">
+                                    </div>
+                                </div>
+
+
+                                <div class="d-none d-xl-block col-xl-4 h-100 mx-auto">
+                                    <div class="h-50 overflow-hidden d-flex align-items-start" style="">
+
+                                        <img src="https://source.unsplash.com/random/?sig=7" alt="" class=""
+                                            style="object-fit: cover; height: 300px; width: 100%; visibility: hidden;"
+                                            id="fifth_img_to_animate">
+                                    </div>
+                                    <div class="h-50 overflow-hidden d-flex align-items-start" style="">
+
+                                        <img src="https://source.unsplash.com/random/?sig=11" alt="" class=""
+                                            style="object-fit: cover; height: 300px; width: 100%; visibility: hidden;"
+                                            id="sixth_img_to_animate">
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="row justify-content-end py-5">
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                    <div class="tab-pane fade" id="pills-biofuel-content" role="tabpanel"
+                        aria-labelledby="pills-biofuel-content-tab" tabindex="0">
+                        <div class="tab-pane" id="pills-waste-content" role="tabpanel"
+                            aria-labelledby="pills-waste-content-tab" tabindex="0">
+
+                            <div class="container">
+                                <h3 class="text-center body_text_color">
+                                    fuel and stuff
+                                </h3>
+                            </div>
+
+                            <div class="imgframe" id="bannerimgframe">
+                                <img class="bannerimg_fuel" id="bannerimg"
+                                    src="https://images.unsplash.com/photo-1528458538087-f58e9ad895da?auto=format&fit=crop&q=80&w=2071&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                                    alt="fuel image">
+                            </div>
+
+                            <p class="placeholder-glow" id="banner_placeholder" style="visibility: hidden;">
+                                <span class="placeholder customeplaceholderstyling"></span>
+                            </p>
+
+
+
+                            <div class="container mb-5">
+                                <p class="text-center fs-5">
+                                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aut porro pariatur vitae
+                                    quod ratione ipsa voluptates esse quam quibusdam a?
+                                </p>
+                            </div>
+
+
+                            <div id="sliding_container" class="container p-0"
+                                style="touch-action: pan-y; overflow: hidden; height: 600px; background: linear-gradient(0deg, rgb(255 255 255 / 1) 0%, rgb(0 0 0 / 1) 100%) 56.74% 5.02% / 347.8% 215.6% no-repeat no-repeat; box-shadow: inset 0px 0px 20px 10px rgba(0,0,0,0.6);">
+                                <div id="sliding_content" class="sliding-left-animation d-flex"
+                                    style="width: fit-content; position: relative; left: 50px; top: 50px; user-select: none; user-drag: none; pointer-events: none;">
+                                    <img src="https://source.unsplash.com/random/?sig=12" alt="" class=""
+                                        style="object-fit: cover; height: 500px; width: 300px;"
+                                        id="first_element_of_sliding_content">
+                                    <p class="text-white mx-2 my-auto"
+                                        style="height: fit-content; min-width: 300px; width: 300px;">Lorem ipsum, dolor
+                                        sit amet consectetur adipisicing elit. Distinctio libero illo
+                                        dolorem non totam pariatur tempora voluptatum id, quam, quae voluptates
+                                        quibusdam explicabo. Sint tempora nobis quidem necessitatibus dicta. Repudiandae
+                                    </p>
+                                    <img src="https://source.unsplash.com/random/?sig=13" alt="" class=""
+                                        style="object-fit: cover; height: 500px; width: 300px;" id="">
+                                    <p class="text-white mx-2"
+                                        style="height: fit-content; min-width: 300px; width: 300px; ">Lorem ipsum, dolor
+                                        sit amet consectetur adipisicing elit. Distinctio libero illo
+                                        dolorem non totam pariatur tempora voluptatum id, quam, quae voluptates
+                                        quibusdam explicabo. Sint tempora nobis quidem necessitatibus dicta. Repudiandae
+                                    </p>
+                                    <img src="https://source.unsplash.com/random/?sig=15" alt="" class=""
+                                        style="object-fit: cover; height: 500px; width: 300px;" id="">
+                                    <p class="text-white mx-2 mt-auto"
+                                        style="height: fit-content; min-width: 300px; width: 300px; ">Lorem ipsum, dolor
+                                        sit amet consectetur adipisicing elit. Distinctio libero illo
+                                        dolorem non totam pariatur tempora voluptatum id, quam, quae voluptates
+                                        quibusdam explicabo. Sint tempora nobis quidem necessitatibus dicta.
+                                        Repudiandae.</p>
+                                    <img src="https://source.unsplash.com/random/?sig=17" alt="" class=""
+                                        style="object-fit: cover; height: 500px; width: 300px;"
+                                        id="first_element_of_sliding_content">
+                                    <p class="text-white mx-2 my-auto"
+                                        style="height: fit-content; min-width: 300px; width: 300px;">Lorem ipsum, dolor
+                                        sit amet consectetur adipisicing elit. Distinctio libero illo
+                                        dolorem non totam pariatur tempora voluptatum id, quam, quae voluptates
+                                        quibusdam explicabo. Sint tempora nobis quidem necessitatibus dicta. Repudiandae
+                                    </p>
+                                    <img src="https://source.unsplash.com/random/?sig=16" alt="" class=""
+                                        style="object-fit: cover; height: 500px; width: 300px;" id="">
+
+                                </div>
+
+
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+
+
+                <footer>
+                    <div class="row m-5 p-2">
+                        <div class="col">
+                            <p class="text-center fw-semibold fs-5" style="color: #d9d9d9;">
+                                <button type="button" class="btn btn-lg text-light"
+                                    data-bs-toggle="contact_info_popover" data-bs-title="Contact Info"
+                                    data-bs-html="true" data-bs-sanitize="false"
+                                    data-bs-content='<li>Number: (555) 555-5555</li> <br> <li>Email: yabadabado@yoho.com</li>'>
+                                    Contact Info</button>
+                            </p>
+                        </div>
+                        <div class="col">
+                            <p class="text-center fw-semibold fs-5" style="color: #d9d9d9;">
+                                <button type="button" class="btn btn-lg text-light" data-bs-toggle="careers_popover"
+                                    data-bs-title="Careers" data-bs-html="true" data-bs-sanitize="false"
+                                    data-bs-content='<li>Plumber</li> <br> <li>Carpenter</li>'>
+                                    Careers</button>
+                            </p>
+                        </div>
+                        <div class="col">
+                            <p class="text-center fw-semibold fs-5" style="color: #d9d9d9;">
+                                <button type="button" class="btn btn-lg text-light" data-bs-toggle="more_popover"
+                                    data-bs-title="More" data-bs-html="true" data-bs-sanitize="false"
+                                    data-bs-content='<li>Be nice</li> <br> <li>Show kindness</li>'>
+                                    More</button>
+                            </p>
+                            </p>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+
+        </div>
+        </div>
+        <script src="script.js"></script>
+    </body>
+
+</html>
