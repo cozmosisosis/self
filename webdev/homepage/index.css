@@ -1,0 +1,20 @@
+.title {
+    color: blue;
+    text-align: center;
+    font-size: 50px;
+}
+
+.introduction {
+    text-align: center;
+}
+
+.plans {
+    display: inline-block;
+    margin: 50px;
+    font-size: 20px;
+}
+
+.plans_list {
+
+    text-align: center;
+}
