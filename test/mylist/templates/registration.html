@@ -31,7 +31,7 @@ MyList Account Creation Page
                 <th>Password</th>
                 <th>Password Verification</th>
             </tr>
-            <form method="post">
+            <form >
                 <tr>
                     <td>
                         <input type="text">
@@ -45,10 +45,10 @@ MyList Account Creation Page
                 </tr>
                 <tr>
                     <td>
-                        <input type="submit" formaction="/" value="Create Account">
+                        <input type="submit" formaction="/" formmethod="post" value="Submit">
                     </td>
                     <td>
-                        <input type="submit" formaction="/" value="Create Account">
+                        <input type="submit" formaction="/login" formmethod="get" value="Login Page">
                     </td>
                 </tr>
             </form>
