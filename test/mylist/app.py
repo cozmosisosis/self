@@ -4,9 +4,12 @@ app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 
-@app.route("/")
+@app.route("/", methods=['POST', 'GET'])
 def index():
-    return render_template("/index.html")
+    if request.method == 'GET':
+        return render_template("index.html")
+    return render_template("login.html")
+        
 
 @app.route("/a")
 def a():
