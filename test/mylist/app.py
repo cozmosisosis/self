@@ -14,5 +14,5 @@ def a():
 
 @app.errorhandler(404)
 def page_not_found(error):
-    flash('Not a valid path. Sorry! \nBut Anyways   ')
+    flash('Not a valid path. Sorry! But Anyways   ')
     return redirect("/")
