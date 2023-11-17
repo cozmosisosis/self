@@ -3,7 +3,7 @@
 
 
 {% block title %}
-MyList Login Page
+MyList Account Creation Page
 {% endblock %}
 
 
@@ -21,16 +21,17 @@ MyList Login Page
     </div>
 
     <div>
-        Welcome to MyList! <br> Please Login
+        Welcome to MyList! <br> Please Create an Account
     </div>
 
     <div>
         <table>
-            <form >
-                <tr>
-                    <th>Username</th>
-                    <th>Password</th>
-                </tr>
+            <tr>
+                <th>Username</th>
+                <th>Password</th>
+                <th>Password Verification</th>
+            </tr>
+            <form method="post">
                 <tr>
                     <td>
                         <input type="text">
@@ -38,13 +39,16 @@ MyList Login Page
                     <td>
                         <input type="text">
                     </td>
+                    <td>
+                        <input type="text">
+                    </td>
                 </tr>
                 <tr>
                     <td>
-                        <input type="submit" formaction="/" formmethod="post" value="Login">
+                        <input type="submit" formaction="/" value="Create Account">
                     </td>
                     <td>
-                        <input type="submit" formaction="/registration" formmethod="get" value="Make an Account">
+                        <input type="submit" formaction="/" value="Create Account">
                     </td>
                 </tr>
             </form>
