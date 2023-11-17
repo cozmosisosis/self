@@ -7,8 +7,8 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 @app.route("/", methods=['POST', 'GET'])
 def index():
     if request.method == 'GET':
-        return render_template("index.html")
-    return render_template("login.html")
+        return render_template("login.html")
+    return render_template("index.html")
         
 
 @app.route("/a")

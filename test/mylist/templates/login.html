@@ -7,10 +7,10 @@ MyList Login Page
 {% endblock %}
 
 
+{% block main %}
 <div>
 
     <div>
-        {% block main %}
         {% with messages = get_flashed_messages() %}
         {% if messages %}
         {% for message in messages %}
@@ -18,13 +18,12 @@ MyList Login Page
         {% endfor %}
         {% endif %}
         {% endwith %}
-        {% endblock %}
     </div>
     
     <div>
-        Welcome to MyList! Please Login
+        Welcome to MyList! <br> Please Login
     </div>
-
+    
     <div>
         <form action="/" method="post">
             <table>
@@ -32,7 +31,17 @@ MyList Login Page
                     <th>Username</th>
                     <th>Password</th>
                 </tr>
+                <tr>
+                    <td>
+                        <input type="text">
+                    </td>
+                    <td>
+                        <input type="text">
+                    </td>
+                </tr>
             </table>
         </form>
     </div>
 </div>
+
+{% endblock %}
