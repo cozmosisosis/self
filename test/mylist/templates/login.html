@@ -10,7 +10,7 @@ MyList Login Page
 {% block main %}
 <div>
 
-    <div>
+    <div >
         {% with messages = get_flashed_messages() %}
         {% if messages %}
         {% for message in messages %}
@@ -26,25 +26,25 @@ MyList Login Page
 
     <div>
         <table>
-            <form >
+            <form action="/login" method="post">
                 <tr>
                     <th>Username</th>
                     <th>Password</th>
                 </tr>
                 <tr>
                     <td>
-                        <input type="text">
+                        <input type="text" name="username" autocomplete="off" placeholder="Username">
                     </td>
                     <td>
-                        <input type="text">
+                        <input type="text" name="password" autocomplete="off" placeholder="Password">
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <input type="submit" formaction="/" formmethod="post" value="Login">
+                        <input type="submit" value="Login">
                     </td>
                     <td>
-                        <input type="submit" formaction="/registration" formmethod="get" value="Make an Account">
+                        <a href="/register">Register For Account</a>
                     </td>
                 </tr>
             </form>

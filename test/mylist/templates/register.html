@@ -34,21 +34,21 @@ MyList Account Creation Page
             <form >
                 <tr>
                     <td>
-                        <input type="text">
+                        <input type="text" name="username" placeholder="Username" autocomplete="off">
                     </td>
                     <td>
-                        <input type="text">
+                        <input type="text" name="password" placeholder="Password" autocomplete="off">
                     </td>
                     <td>
-                        <input type="text">
+                        <input type="text" name="password_verification" placeholder="Password again" autocomplete="off">
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <input type="submit" formaction="/" formmethod="post" value="Submit">
+                        <input type="submit" formaction="/register" formmethod="post" value="Submit">
                     </td>
                     <td>
-                        <input type="submit" formaction="/login" formmethod="get" value="Login Page">
+                        <a href="/login">Already Have an Account</a>
                     </td>
                 </tr>
             </form>
