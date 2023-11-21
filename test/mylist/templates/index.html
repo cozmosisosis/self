@@ -22,9 +22,33 @@ MyList Index Page
     </div>
     
     <div>
-        Welcome to MyList!
+        Welcome to MyList index page!
+        <form action="/logout" method="get">
+            <input type="submit" value="logout">
+        </form>
     </div>
     
+    <div>
+        {% for row in user %}
+        <div>
+            <div>
+                <p>user id: {{ row['user_id'] }}</p>
+            </div>
+            <div>
+                <p>username: {{ row['username'] }}</p>
+            </div>
+            <div>
+                <p>password: {{ row['password'] }}</p>
+            </div>
+            <div>
+                <p>date created: {{ row['date_created'] }}</p>
+            </div>
+            <div>
+                <p>date last active: {{ row['date_last_active'] }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 
 {% endblock %}

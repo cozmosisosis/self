@@ -1,10 +1,12 @@
-import os
-import logging
-from helpers import login_required
+import os, logging, sqlite3
+from helpers import login_required, get_db, close_db
 from flask import Flask, flash, render_template, redirect, session, request, url_for
+from werkzeug.security import check_password_hash, generate_password_hash
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+
 
 
 
@@ -13,27 +15,68 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 @login_required
 def index():
 
-    if 'username' in session:
-        return f'Logged in as {session["username"]}'
-    return 'You are logged out...'
+    if 'user_id' in session:
+        error = None
+        db = get_db()
+        user = db.execute('SELECT * FROM users WHERE user_id = ?', (session['user_id'],))
+
+        if user is None:
+            error = "Failure retreving user account info please try logging on again"
+            flash(error)
+            return redirect(url_for('login'))
+
+
+        return render_template("index.html", user=user)
+
+    error = 'login failure, user_id not found in session'
+    flash(error)
+    return redirect(url_for('login'))
     
         
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-
     if request.method == 'POST':
-        session['username'] = request.form['username']
-        return redirect(url_for('index'))
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        if username == "" or password == "":
+            flash("Username and or Password was left empty")
+            return redirect(url_for('login'))
+
+        db = get_db()
+        user = db.execute('SELECT * FROM users WHERE username = ?', (username,)).fetchone()
+        db.close()
+        error = None
+
+        if user is None or not check_password_hash(user['password'], password):
+            error = 'Username and or Password is Incorrect'
+
+        if error is None:
+
+            session.clear()
+            session['user_id'] = user['user_id']
+            return redirect(url_for('index'))
+
+        flash(error)
+        return redirect(url_for('login'))
+    else:
+        try:
+            if session['user_id'] is not None:
+                flash('Logged in!')
+                return redirect(url_for('index'))
+        except:
+            return render_template('login.html')
+
+        
     
-    return render_template('login.html')
     
 
 
 @app.route("/logout", methods=['POST', 'GET'])
 def logout():
-    session.pop('username', None)
+    session.clear()
     flash("Logged out")
     return redirect(url_for('login'))
 
@@ -43,11 +86,18 @@ def logout():
 def register():
 
     if request.method == 'GET':
+        try:
+            if session['user_id'] is not None:
+                flash('Must not be logged in to register')
+                return redirect(url_for('index'))
+        except: pass
+
         return render_template('register.html')
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
         password_verification = request.form['password_verification']
+        db = get_db()
         error = None
 
         if not username:
@@ -62,13 +112,22 @@ def register():
         elif not password == password_verification:
             error = 'Passwords do not match'
 
-        flash(error)
 
         if error is None: 
+            try:
+                db.execute(
+                    'INSERT INTO users (username, password, date_created, date_last_active) VALUES (?, ?, ?, ?)',
+                    (username, generate_password_hash(password), datetime.utcnow(), datetime.utcnow())
+                )
+                db.commit()
+            except db.IntegrityError:
+                error = f"User {username} is already registered."
+            
+            else:
+                return redirect(url_for('login'))
 
-            return redirect("/login")
-            # try:
-            #     create username
+
+        flash(error)
 
 
         return redirect(url_for('register'))
@@ -78,5 +137,5 @@ def register():
 
 @app.errorhandler(404)
 def page_not_found(error):
-
+    flash('Invalid route')
     return redirect(url_for('index'))
