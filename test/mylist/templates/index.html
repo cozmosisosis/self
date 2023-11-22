@@ -23,6 +23,8 @@ MyList Index Page
     
     <div>
         Welcome to MyList index page!
+        <a href="#">My Account</a>
+        <a href="#">Edit account</a>
         <form action="/logout" method="get">
             <input type="submit" value="logout">
         </form>
@@ -38,7 +40,10 @@ MyList Index Page
                 <p>username: {{ row['username'] }}</p>
             </div>
             <div>
-                <p>password: {{ row['password'] }}</p>
+                <p>password: {{ row['hashed_password'] }}</p>
+            </div>
+            <div>
+                <p>user email: {{ row['user_email'] }}</p>
             </div>
             <div>
                 <p>date created: {{ row['date_created'] }}</p>

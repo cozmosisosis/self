@@ -5,6 +5,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
 
 app = Flask(__name__)
+
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 
@@ -25,7 +26,8 @@ def index():
             flash(error)
             return redirect(url_for('login'))
 
-
+        db.execute('UPDATE users SET date_last_active = ? WHERE user_id = ?', (datetime.utcnow(), session['user_id']))
+        db.commit()
         return render_template("index.html", user=user)
 
     error = 'login failure, user_id not found in session'
@@ -40,24 +42,28 @@ def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
+        error = None
 
         if username == "" or password == "":
-            flash("Username and or Password was left empty")
-            return redirect(url_for('login'))
+            error = 'Username and or Password was left empty'
 
         db = get_db()
         user = db.execute('SELECT * FROM users WHERE username = ?', (username,)).fetchone()
-        db.close()
-        error = None
 
-        if user is None or not check_password_hash(user['password'], password):
+
+        if user is None or not check_password_hash(user['hashed_password'], password):
             error = 'Username and or Password is Incorrect'
 
         if error is None:
 
             session.clear()
             session['user_id'] = user['user_id']
-            return redirect(url_for('index'))
+            try:
+                db.execute('UPDATE users SET date_last_active = ? WHERE user_id = ?', (datetime.utcnow(), user['user_id']))
+                db.commit()
+                return redirect(url_for('index'))
+            except:
+                error = 'Failed to update date last active in account info'
 
         flash(error)
         return redirect(url_for('login'))
@@ -65,6 +71,9 @@ def login():
         try:
             if session['user_id'] is not None:
                 flash('Logged in!')
+                db = get_db()
+                db.execute('UPDATE users SET date_last_active = ? WHERE user_id = ?', (datetime.utcnow(), session['user_id']))
+                db.commit()
                 return redirect(url_for('index'))
         except:
             return render_template('login.html')
@@ -96,6 +105,7 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        user_email = request.form.get('email',"None")
         password_verification = request.form['password_verification']
         db = get_db()
         error = None
@@ -116,14 +126,15 @@ def register():
         if error is None: 
             try:
                 db.execute(
-                    'INSERT INTO users (username, password, date_created, date_last_active) VALUES (?, ?, ?, ?)',
-                    (username, generate_password_hash(password), datetime.utcnow(), datetime.utcnow())
+                    'INSERT INTO users (username, hashed_password, user_email, date_created, date_last_active) VALUES (?, ?, ?, ?, ?)',
+                    (username, generate_password_hash(password), user_email, datetime.utcnow(), datetime.utcnow())
                 )
                 db.commit()
             except db.IntegrityError:
                 error = f"User {username} is already registered."
             
             else:
+                flash('Account created, Please Login!')
                 return redirect(url_for('login'))
 
 
