@@ -28,7 +28,8 @@ def index():
 
         db.execute('UPDATE users SET date_last_active = ? WHERE user_id = ?', (datetime.utcnow(), session['user_id']))
         db.commit()
-        return render_template("index.html", user=user)
+        
+        return render_template("index.html")
 
     error = 'login failure, user_id not found in session'
     flash(error)
@@ -143,6 +144,60 @@ def register():
 
         return redirect(url_for('register'))
 
+
+
+@app.route("/account", methods=['GET', 'POST'])
+@login_required
+def account():
+    if 'user_id' in session:
+        error = None
+        db = get_db()
+        user = db.execute('SELECT user_id, username, user_email, date_created, date_last_active FROM users WHERE user_id = ?', (session['user_id'],))
+
+        if user is None:
+            error = "Failure retreving user account info please try logging on again"
+            flash(error)
+            return redirect(url_for('login'))
+
+        db.execute('UPDATE users SET date_last_active = ? WHERE user_id = ?', (datetime.utcnow(), session['user_id']))
+        db.commit()
+        return render_template("account.html", user=user)
+
+    
+
+@app.route("/my_items", methods=['GET', 'POST'])
+@login_required
+def my_items():
+
+    if request.method == 'GET':
+        # render db info
+        db = get_db()
+        custom_items = db.execute("SELECT * FROM custom_items WHERE user_id = ?", (session['user_id'],))
+        return render_template('my_items.html', custom_items=custom_items)
+        
+    if not request.form['item_name']:
+        flash('Name must be filled out to submit')
+        return redirect(url_for('my_items'))
+
+    new_item_name = request.form['item_name']
+    db = get_db()
+    db.execute("INSERT INTO custom_items (user_id, item_name) VALUES (?, ?)", (session['user_id'], new_item_name, ))
+    db.commit()
+    return redirect(url_for('my_items'))
+    
+    
+
+@app.route("/remove_custom_item", methods=['GET', 'POST'])
+@login_required
+def remove_custom_item():
+    if request.method == 'GET':
+        return redirect(url_for('my_items'))
+    
+    item_deleting = request.form['custom_items_id']
+    db = get_db()
+    db.execute("DELETE FROM custom_items WHERE custom_items_id = ?", (item_deleting,))
+    db.commit()
+    return redirect(url_for('my_items'))
 
 
 

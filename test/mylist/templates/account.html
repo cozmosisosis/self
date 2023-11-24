@@ -1,0 +1,59 @@
+{% extends "main_template.html" %}
+
+
+
+{% block title %}
+Account Info
+{% endblock %}
+
+
+
+{% block main %}
+Account page
+<a href="/">Home page</a>
+<a href="/my_items">My Items</a>
+
+<div>
+    {% for row in user %}
+    <div>
+        
+        <div>
+            <p>user id: {{ row['user_id'] }}</p>
+        </div>
+        <div>
+            <p>username: {{ row['username'] }}</p>
+        </div>
+            <div>
+                <p>password: *********</p>
+            </div>
+            <div>
+                <p>user email: {{ row['user_email'] }}</p>
+            </div>
+            <div>
+                <p>date created: {{ row['date_created'] }}</p>
+            </div>
+            <div>
+                <p>date last active: {{ row['date_last_active'] }}</p>
+            </div>
+          
+        <button >Edit info</button>
+        <form action="/" method="post">
+            <input type="reset" value="Clear">
+            <table>
+                <tr>
+                    <th>Username</th>
+                    <th>Password</th>
+                    <th>Email</th>
+                </tr>
+                <tr>
+                    <td><input type="text"></td>
+                    <td><input type="password"></td>
+                    <td><input type="email"></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

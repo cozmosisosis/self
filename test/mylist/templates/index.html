@@ -20,39 +20,40 @@ MyList Index Page
         {% endif %}
         {% endwith %}
     </div>
-    
+
     <div>
-        Welcome to MyList index page!
-        <a href="#">My Account</a>
-        <a href="#">Edit account</a>
         <form action="/logout" method="get">
+            Welcome to MyList index page!
+            <a href="/my_items">My Items</a>
+            <a href="/account">My Account</a>
             <input type="submit" value="logout">
         </form>
     </div>
-    
+
     <div>
-        {% for row in user %}
-        <div>
-            <div>
-                <p>user id: {{ row['user_id'] }}</p>
-            </div>
-            <div>
-                <p>username: {{ row['username'] }}</p>
-            </div>
-            <div>
-                <p>password: {{ row['hashed_password'] }}</p>
-            </div>
-            <div>
-                <p>user email: {{ row['user_email'] }}</p>
-            </div>
-            <div>
-                <p>date created: {{ row['date_created'] }}</p>
-            </div>
-            <div>
-                <p>date last active: {{ row['date_last_active'] }}</p>
-            </div>
-        </div>
-        {% endfor %}
+        <table>
+            <tr>
+                <th>
+                    <p>Name</p>
+                </th>
+                <th>
+                    <p>Quantity</p>
+                </th>
+                <th></th>
+                <th></th>
+
+            </tr>
+            <tr>
+                <td>
+                    <p>Tomatoes</p>
+                </td>
+                <td>
+                    <p>1 LB</p>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
     </div>
 </div>
 
