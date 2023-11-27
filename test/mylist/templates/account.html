@@ -1,4 +1,5 @@
 {% extends "main_template.html" %}
+{% include "loggedin_template.html" %}
 
 
 
@@ -10,8 +11,6 @@ Account Info
 
 {% block main %}
 Account page
-<a href="/">Home page</a>
-<a href="/my_items">My Items</a>
 
 <div>
     {% for row in user %}

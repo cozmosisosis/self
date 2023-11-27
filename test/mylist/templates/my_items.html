@@ -1,4 +1,5 @@
 {% extends "main_template.html" %}
+{% include "loggedin_template.html" %}
 
 
 {% block title %}
@@ -10,22 +11,7 @@ My items page!
 {% block main %}
 
 <div>
-
-    <div>
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        {% for message in messages %}
-        {{ message }}
-        {% endfor %}
-        {% endif %}
-        {% endwith %}
-    </div>
-
-    <div>
-        My items Page!!
-        <a href="/"> Home Page</a>
-        <a href="/account"> My Account</a>
-    </div>
+    My Items
 
 
     <div>
@@ -38,17 +24,9 @@ My items page!
                     <th>
                         <p>Item Name</p>
                     </th>
-                    <th>
-                        <p>Quantity
-                    </th>
-                    <th>
-                        <p>When to Add</p>
-                    </th>
                 </tr>
                 <tr>
                     <td><input type="text" placeholder="Name" autocomplete="off" name="item_name" autofocus></td>
-                    <td><input type="text" placeholder="Quantity" autocomplete="off"></td>
-                    <td><input type="text" placeholder="Days to Add" autocomplete="off"> Days</td>
                     <td>
                         <input type="submit" value="Add">
                     </td>
@@ -74,15 +52,15 @@ My items page!
                 </th>
             </tr>
 
-            {% for row in custom_items %}
+            {% for row in item %}
 
             <tr>
                 <td>{{ row['item_name'] }}</td>
-                <td>{{ row['custom_items_id'] }}</td>
+                <td>{{ row['item_id'] }}</td>
                 <td>{{ row['user_id'] }}</td>
                 <td>
-                    <form action="/remove_custom_item" method="post">
-                        <input type="hidden" name="custom_items_id" value="{{ row['custom_items_id'] }}">
+                    <form action="/remove_item" method="post">
+                        <input type="hidden" name="item_id" value="{{ row['item_id'] }}">
                         <input type="submit" value="Remove">
                     </form>
                 </td>

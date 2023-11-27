@@ -172,8 +172,8 @@ def my_items():
     if request.method == 'GET':
         # render db info
         db = get_db()
-        custom_items = db.execute("SELECT * FROM custom_items WHERE user_id = ?", (session['user_id'],))
-        return render_template('my_items.html', custom_items=custom_items)
+        item = db.execute("SELECT * FROM item WHERE user_id = ?", (session['user_id'],))
+        return render_template('my_items.html', item=item)
         
     if not request.form['item_name']:
         flash('Name must be filled out to submit')
@@ -181,23 +181,51 @@ def my_items():
 
     new_item_name = request.form['item_name']
     db = get_db()
-    db.execute("INSERT INTO custom_items (user_id, item_name) VALUES (?, ?)", (session['user_id'], new_item_name, ))
+    db.execute("INSERT INTO item (user_id, item_name) VALUES (?, ?)", (session['user_id'], new_item_name, ))
     db.commit()
     return redirect(url_for('my_items'))
     
     
 
-@app.route("/remove_custom_item", methods=['GET', 'POST'])
+@app.route("/remove_item", methods=['GET', 'POST'])
 @login_required
-def remove_custom_item():
+def remove_item():
     if request.method == 'GET':
         return redirect(url_for('my_items'))
     
-    item_deleting = request.form['custom_items_id']
+    item_deleting = request.form['item_id']
     db = get_db()
-    db.execute("DELETE FROM custom_items WHERE custom_items_id = ?", (item_deleting,))
+    db.execute("DELETE FROM item WHERE item_id = ?", (item_deleting,))
     db.commit()
     return redirect(url_for('my_items'))
+
+
+
+@app.route("/my_groups", methods=['GET', 'POST'])
+@login_required
+def my_groups():
+    if request.method == 'GET':
+        db = get_db()
+        groups = db.execute("SELECT * FROM groups WHERE user_id = ?", (session['user_id'],))
+        return render_template('my_groups.html', groups=groups)
+    new_group = request.form['group_name']
+    
+    if not new_group:
+        flash('Group Name Not Filled out!')
+        return redirect(url_for('my_groups'))
+    
+    db = get_db()
+    group = db.execute("SELECT * FROM groups WHERE groups_name = ?", (new_group,)).fetchone()
+
+    if group is not None:
+        flash('Group already exists')
+        return redirect(url_for('my_groups'))
+
+    db.execute("INSERT INTO groups (user_id, groups_name) VALUES (?,?)", (session['user_id'], new_group))  
+    db.commit()
+
+    flash('Group Added')
+    return redirect(url_for('my_groups'))
 
 
 

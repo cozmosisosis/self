@@ -1,0 +1,33 @@
+{% extends "main_template.html" %}
+
+
+
+
+
+
+{% block main %}
+
+<div>
+
+    <div>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        {{ message }}
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+
+    <div>
+        <form action="/logout" method="get">
+            <a href="/">Home page</a>
+            <a href="/my_items">My Items</a>
+            <a href="/my_groups">My Groups</a>
+            <a href="/account">My Account</a>
+            <input type="submit" value="logout">
+        </form>
+    </div>
+</div>
+
+{% endblock %}

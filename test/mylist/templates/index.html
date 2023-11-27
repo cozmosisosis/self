@@ -1,34 +1,16 @@
 {% extends "main_template.html" %}
+{% include "loggedin_template.html" %}
 
 
 
 {% block title %}
-MyList Index Page
+MyList Home Page
 {% endblock %}
 
 
 {% block main %}
+Home Page
 
-<div>
-
-    <div>
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        {% for message in messages %}
-        {{ message }}
-        {% endfor %}
-        {% endif %}
-        {% endwith %}
-    </div>
-
-    <div>
-        <form action="/logout" method="get">
-            Welcome to MyList index page!
-            <a href="/my_items">My Items</a>
-            <a href="/account">My Account</a>
-            <input type="submit" value="logout">
-        </form>
-    </div>
 
     <div>
         <table>
