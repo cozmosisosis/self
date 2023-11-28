@@ -4,11 +4,9 @@
 
 
 
-
 {% block main %}
-
 <div>
-
+    
     <div>
         {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -18,7 +16,7 @@
         {% endif %}
         {% endwith %}
     </div>
-
+    
     <div>
         <form action="/logout" method="get">
             <a href="/">Home page</a>
@@ -29,5 +27,6 @@
         </form>
     </div>
 </div>
-
+{% block m2 %}{% endblock %}
 {% endblock %}
+
