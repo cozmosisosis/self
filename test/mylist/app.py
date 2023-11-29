@@ -207,7 +207,7 @@ def remove_item():
 def my_groups():
     if request.method == 'GET':
         db = get_db()
-        group_items = db.execute("SELECT groups.groups_name, item.item_name, groups_items.quantity FROM groups_items JOIN item ON groups_items.item_id = item.item_id JOIN groups ON groups.groups_id=groups_items.groups_id")
+        group_items = db.execute("SELECT groups.groups_name, item.item_name, groups_items.quantity, item.user_id FROM groups_items JOIN item ON groups_items.item_id = item.item_id JOIN groups ON groups.groups_id=groups_items.groups_id WHERE item.user_id = ?", (session['user_id'],))
         group_items = list(group_items)
         groups = db.execute("SELECT * FROM groups WHERE user_id = ?", (session['user_id'],))
         return render_template('my_groups.html', groups=groups, group_items=group_items)
