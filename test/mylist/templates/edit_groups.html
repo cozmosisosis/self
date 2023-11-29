@@ -5,7 +5,7 @@
 
 
 {% block title %}
-My Groups Page
+Edit Groups Page
 {% endblock %}
 
 
@@ -14,29 +14,8 @@ My Groups Page
 
 {% block main %}
 <div>
-    My Groups Page!
+    Edit Groups!
     <div>
-        <div>
-            <form action="/my_groups" method="post">
-                <table>
-                    <div>
-                        <p>Create Group</p>
-                    </div>
-                    <tr>
-                        <th>
-                            <p>Group Name</p>
-                        </th>
-                    </tr>
-                    <tr>
-                        <td><input type="text" placeholder="New Group" autocomplete="off" name="group_name" autofocus>
-                        </td>
-                        <td>
-                            <input type="submit" value="Add">
-                        </td>
-                    </tr>
-                </table>
-            </form>
-        </div>
 
         <div>
             <table>
@@ -65,13 +44,13 @@ My Groups Page
                         {% if group['groups_name'] == row['groups_name'] %}
                         <div>
 
-                            Ingredient: 
+                            Ingredient:
                             {{ group['item_name']}}
-                            
-                            Quantity: 
+
+                            Quantity:
                             {{ group['quantity']}}
                         </div>
-                            
+
                         {% endif %}
                         {% endfor %}
                     </td>
@@ -98,15 +77,41 @@ My Groups Page
 
 
         <div>
-
             <br>
 
 
-        
+            <form action="/add_to_group" method="post">
 
 
+                <label for="groups">Choose A Group:</label>
+                <select name="groups" id="groups">
+                    <option value="None" disabled selected>Group</option>
+
+                    {% for group in groups %}
+                    <option value="{{ group['groups_id'] }}">{{ group['groups_name'] }}</option>
+                    {% endfor %}
+
+                </select>
 
 
+                <label for="items">Choose An Item:</label>
+                <select name="items" id="items">
+                    <option value="None" disabled selected>Item</option>
+
+                    {% for item in users_items %}
+                    <option value="{{ item['item_id'] }}">{{ item['item_name'] }}</option>
+                    {% endfor %}
+
+                </select>
+
+
+                <label for="quantity">Choose Amount:</label>
+                <input name="quantity" id="quantity" type="number" value="1">
+
+
+                <input type="submit">
+
+            </form>
 
 
 

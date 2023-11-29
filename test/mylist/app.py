@@ -21,6 +21,8 @@ def index():
         db = get_db()
         user = db.execute('SELECT * FROM users WHERE user_id = ?', (session['user_id'],))
 
+
+
         if user is None:
             error = "Failure retreving user account info please try logging on again"
             flash(error)
@@ -28,7 +30,6 @@ def index():
 
         db.execute('UPDATE users SET date_last_active = ? WHERE user_id = ?', (datetime.utcnow(), session['user_id']))
         db.commit()
-        
         return render_template("index.html")
 
     error = 'login failure, user_id not found in session'
@@ -195,7 +196,7 @@ def remove_item():
     
     item_deleting = request.form['item_id']
     db = get_db()
-    db.execute("DELETE FROM item WHERE item_id = ?", (item_deleting,))
+    db.execute("DELETE FROM item WHERE item_id = ? AND user_id = ?", (item_deleting, session['user_id']))
     db.commit()
     return redirect(url_for('my_items'))
 
@@ -206,8 +207,10 @@ def remove_item():
 def my_groups():
     if request.method == 'GET':
         db = get_db()
+        group_items = db.execute("SELECT groups.groups_name, item.item_name, groups_items.quantity FROM groups_items JOIN item ON groups_items.item_id = item.item_id JOIN groups ON groups.groups_id=groups_items.groups_id")
+        group_items = list(group_items)
         groups = db.execute("SELECT * FROM groups WHERE user_id = ?", (session['user_id'],))
-        return render_template('my_groups.html', groups=groups)
+        return render_template('my_groups.html', groups=groups, group_items=group_items)
     new_group = request.form['group_name']
     
     if not new_group:
@@ -226,6 +229,71 @@ def my_groups():
 
     flash('Group Added')
     return redirect(url_for('my_groups'))
+
+
+
+@app.route("/remove_group", methods=['GET', 'POST'])
+@login_required
+def remove_group():
+    if request.method == 'GET':
+        return redirect(url_for('my_groups'))
+    group_deleting = request.form['groups_id']
+    db = get_db()
+    db.execute("DELETE FROM groups WHERE groups_id = ? AND user_id = ?", (group_deleting, session['user_id']))
+    db.commit()
+    return redirect(url_for('my_groups'))
+
+
+
+@app.route("/edit_groups", methods=['GET', 'POST'])
+@login_required
+def edit_groups():
+    if request.method == 'GET':
+        db = get_db()
+
+
+        groups = db.execute("SELECT * FROM groups WHERE user_id = ?", (session['user_id'],))
+        groups = list(groups)
+        group_items = db.execute("SELECT groups.groups_name, item.item_name, groups_items.quantity FROM groups_items JOIN item ON groups_items.item_id = item.item_id JOIN groups ON groups.groups_id=groups_items.groups_id")
+        group_items = list(group_items)
+        users_items = db.execute("SELECT * FROM item WHERE user_id = ?", (session['user_id'],))
+        users_items = list(users_items)
+
+
+        return render_template('edit_groups.html', groups=groups, group_items=group_items, users_items=users_items)
+    return redirect(url_for('edit_groups'))
+
+
+
+@app.route("/add_to_group", methods=['POST', 'GET'])
+@login_required
+def add_to_group():
+
+    if request.method == 'GET':
+        return redirect(url_for('edit_groups'))
+    
+    selected_group = request.form.get('groups')
+    selected_item = request.form.get('items')
+    quantity = request.form.get('quantity')
+    quantity = int(quantity)
+
+
+    if not selected_group or not selected_item or quantity <= 0:
+        flash('Must select group, item to add and a valid quantity (greater than 0)')
+        app.logger.error(selected_group)
+        return redirect(url_for('edit_groups'))
+    
+    db = get_db()
+    users_item = db.execute("SELECT * FROM item WHERE item_id = ? and user_id = ?", (selected_item, session['user_id'],)).fetchone()
+    users_group = db.execute("SELECT * FROM groups WHERE groups_id = ? and user_id = ?", (selected_group, session['user_id'],)).fetchone()
+    
+    if users_item is None or users_group is None:
+        flash('Error occured with either item submitted or group submitted to. No link to user')
+        return redirect(url_for('edit_groups'))
+    
+    db.execute("INSERT INTO groups_items (groups_id, item_id, quantity) VALUES (?, ?, ?)", (selected_group, selected_item, 1))
+    db.commit()
+    return redirect(url_for('edit_groups'))
 
 
 
