@@ -1,0 +1,48 @@
+{% extends "loggedin_template.html" %}
+
+
+
+{% block title %}
+Delete Account
+{% endblock %}
+
+
+
+{% block main %}
+
+<div>
+    <br>
+    <p>
+        Deleting Account is Permanent, all account info will be lost.
+    </p>
+    <br>
+    <p>
+        To Delete Accout Please Fill Out Form And Submit It
+    </p>
+
+
+    <div>
+        <table>
+            <form action="/delete_account" method="post">
+                <tr>
+                    <th>Username</th>
+                    <th>Password</th>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" name="username" autocomplete="off" placeholder="Username" autofocus>
+                    </td>
+                    <td>
+                        <input type="password" name="password" autocomplete="off" placeholder="Password">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="submit" value="DELETE ACCOUNT">
+                    </td>
+                </tr>
+            </form>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -28,7 +28,10 @@ def index():
             flash(error)
             return redirect(url_for('login'))
 
+        app.logger.error('something going on here')
+        
         db.execute('UPDATE users SET date_last_active = ? WHERE user_id = ?', (datetime.utcnow(), session['user_id']))
+        app.logger.error('something going on here after')
         db.commit()
         return render_template("index.html")
 
@@ -182,6 +185,10 @@ def my_items():
 
     new_item_name = request.form['item_name']
     db = get_db()
+    item_exists = db.execute("SELECT * FROM item WHERE item_name = ? AND user_id = ?", (new_item_name, session['user_id'],)).fetchone()
+    if item_exists:
+        flash('Item already exists')
+        return redirect(url_for('my_items'))
     db.execute("INSERT INTO item (user_id, item_name) VALUES (?, ?)", (session['user_id'], new_item_name, ))
     db.commit()
     return redirect(url_for('my_items'))
@@ -196,8 +203,20 @@ def remove_item():
     
     item_deleting = request.form['item_id']
     db = get_db()
+
+    valid_item = db.execute("SELECT * FROM item WHERE item_id = ? AND user_id = ?", (item_deleting, session['user_id'],)).fetchone()
+    if not valid_item:
+        flash('not valid item')
+        return redirect(url_for('my_items'))
+
+    
+    
     db.execute("DELETE FROM item WHERE item_id = ? AND user_id = ?", (item_deleting, session['user_id']))
+    db.execute("DELETE FROM groups_items WHERE item_id = ?", (item_deleting,))
     db.commit()
+
+
+    
     return redirect(url_for('my_items'))
 
 
@@ -218,7 +237,7 @@ def my_groups():
         return redirect(url_for('my_groups'))
     
     db = get_db()
-    group = db.execute("SELECT * FROM groups WHERE groups_name = ?", (new_group,)).fetchone()
+    group = db.execute("SELECT * FROM groups WHERE groups_name = ? AND user_id = ?", (new_group, session['user_id'],)).fetchone()
 
     if group is not None:
         flash('Group already exists')
@@ -239,6 +258,12 @@ def remove_group():
         return redirect(url_for('my_groups'))
     group_deleting = request.form['groups_id']
     db = get_db()
+    valid_group = db.execute("SELECT * FROM groups WHERE groups_id = ? AND user_id = ?", (group_deleting, session['user_id'],)).fetchone()
+    if not valid_group:
+        flash('Error with trying to delete group')
+        return redirect(url_for('my_groups'))
+    
+    db.execute("DELETE FROM groups_items WHERE groups_id = ?", (group_deleting,))
     db.execute("DELETE FROM groups WHERE groups_id = ? AND user_id = ?", (group_deleting, session['user_id']))
     db.commit()
     return redirect(url_for('my_groups'))
@@ -274,15 +299,19 @@ def add_to_group():
     
     selected_group = request.form.get('groups')
     selected_item = request.form.get('items')
-    quantity = request.form.get('quantity')
-    quantity = int(quantity)
+    inputed_quantity = request.form.get('quantity')
 
 
-    if not selected_group or not selected_item or quantity <= 0:
+    if not selected_group or not selected_item or not inputed_quantity:
         flash('Must select group, item to add and a valid quantity (greater than 0)')
-        app.logger.error(selected_group)
         return redirect(url_for('edit_groups'))
     
+    inputed_quantity = int(inputed_quantity)
+    if inputed_quantity <= 0:
+        flash('Must input a valid quantity (greater than 0)')
+        return redirect(url_for('edit_groups'))
+
+
     db = get_db()
     users_item = db.execute("SELECT * FROM item WHERE item_id = ? and user_id = ?", (selected_item, session['user_id'],)).fetchone()
     users_group = db.execute("SELECT * FROM groups WHERE groups_id = ? and user_id = ?", (selected_group, session['user_id'],)).fetchone()
@@ -291,9 +320,60 @@ def add_to_group():
         flash('Error occured with either item submitted or group submitted to. No link to user')
         return redirect(url_for('edit_groups'))
     
-    db.execute("INSERT INTO groups_items (groups_id, item_id, quantity) VALUES (?, ?, ?)", (selected_group, selected_item, 1))
+    ingredient_is_in_groups_items = db.execute("SELECT * FROM groups_items WHERE groups_id = ? AND item_id = ?", (selected_group, selected_item,)).fetchone()
+
+    if not ingredient_is_in_groups_items:
+        db.execute("INSERT INTO groups_items (groups_id, item_id, quantity) VALUES (?, ?, ?)", (selected_group, selected_item, inputed_quantity))
+        db.commit()
+        return redirect(url_for('edit_groups'))
+
+    old_quantity = ingredient_is_in_groups_items['quantity']
+    new_quantity = inputed_quantity + old_quantity
+    db.execute("UPDATE groups_items SET quantity = ? WHERE groups_id = ? AND item_id = ?", (new_quantity, selected_group, selected_item,))
     db.commit()
     return redirect(url_for('edit_groups'))
+
+
+
+@app.route("/delete_account", methods=['GET', 'POST'])
+@login_required
+def delete_account():
+
+    if request.method == 'GET':
+        return render_template('delete_account.html')
+    
+    username = request.form['username']
+    password = request.form['password']
+
+    if not username or not password:
+        flash('Must fill out both username and password to DELETE account')
+        return redirect(url_for('delete_account'))
+    
+    db = get_db()
+    user = db.execute('SELECT * FROM users WHERE user_id = ?', (session['user_id'],)).fetchone()
+
+
+    if user is None or username != user['username'] or not check_password_hash(user['hashed_password'], password):
+        flash('Error with submitted User Info for deletion. Please log out, log back in, and then try deleting account again.')
+        return redirect(url_for('delete_account'))
+
+
+    # NEED TO DELETE ALL USER DATA BEFORE USER ACCOUNT
+
+    db.execute("DELETE FROM groups_items WHERE item_id IN (SELECT item_id FROM item WHERE user_id = ?)", (session['user_id'],))
+    db.execute("DELETE FROM item WHERE user_id = ?", (session['user_id']))
+
+    db.execute("DELETE FROM groups_items WHERE groups_id IN (SELECT groups_id FROM groups WHERE user_id = ?)", (session['user_id']))
+    db.execute("DELETE FROM groups WHERE user_id = ?", (session['user_id']))
+
+    db.execute("DELETE from users WHERE user_id = ?", (session['user_id']))
+
+    db.commit()
+
+    session.clear()
+    flash("Account Deleted")
+    return redirect(url_for('login'))
+
 
 
 
