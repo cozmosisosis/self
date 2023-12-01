@@ -24,6 +24,9 @@ Edit Groups Page
                 </div>
                 <tr>
                     <th>
+                        <p>Group id</p>
+                    </th>
+                    <th>
                         <p>Group Name</p>
                     </th>
 
@@ -38,15 +41,19 @@ Edit Groups Page
 
                 <tr>
 
+                    <td>{{ row['groups_id'] }}
                     <td>{{ row['groups_name'] }}
 
                         {% for group in group_items %}
-                        {% if group['groups_name'] == row['groups_name'] %}
+                        {% if group['groups_id'] == row['groups_id'] %}
                         <div>
 
                             Ingredient:
                             {{ group['item_name']}}
 
+                            user id:
+                            {{ group['user_id']}}
+                            
                             Quantity:
                             {{ group['quantity']}}
                         </div>
@@ -116,6 +123,7 @@ Edit Groups Page
 
 
         </div>
+
 
 
     </div>
