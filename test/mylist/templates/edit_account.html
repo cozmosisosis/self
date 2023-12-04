@@ -1,0 +1,87 @@
+{% extends "loggedin_template.html" %}
+
+
+
+{% block title %}
+Edit Account
+{% endblock %}
+
+
+
+{% block main %}
+
+<div>
+    <br>
+    <p>
+        Please verify all info before submitting. If you make a mistake your accoount may not be able to be recovered.
+    </p>
+    <br>
+    <p>
+        To Edit Accout Please Fill Out Form And Submit It
+    </p>
+
+
+    <div>
+        <table>
+            <tr>
+                <th>New Username</th>
+                <th>New Password</th>
+                <th>New Password Verification</th>
+                <th>New Email</th>
+                <th>New Email Verification</th>
+            </tr>
+            <form>
+                <tr>
+                    <td>
+                        <input type="text" name="username" placeholder="Username" autocomplete="off" autofocus>
+                    </td>
+                    <td>
+                        <input type="text" name="password" placeholder="Password" autocomplete="off">
+                    </td>
+                    <td>
+                        <input type="text" name="password_verification" placeholder="Password again" autocomplete="off">
+                    </td>
+                    <td>
+                        <input type="text" name="email" placeholder="Email" autocomplete="off">
+                    </td>
+                    <td>
+                        <input type="text" name="email_verification" placeholder="Email again" autocomplete="off">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="reset" value="Clear">
+                    </td>
+                </tr>
+        </table>
+    </div>
+
+
+    <br>
+
+
+
+    <div>
+        <table>
+                <tr>
+                    <th>Username</th>
+                    <th>Password</th>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" name="username" autocomplete="off" placeholder="Username" autofocus>
+                    </td>
+                    <td>
+                        <input type="password" name="password" autocomplete="off" placeholder="Password">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="submit" value="Submit">
+                    </td>
+                </tr>
+            </form>
+        </table>
+    </div>
+</div>
+{% endblock %}

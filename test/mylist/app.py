@@ -224,7 +224,6 @@ def remove_item():
         return redirect(url_for('my_items'))
 
     db.execute("DELETE FROM item WHERE item_id = ? AND user_id = ?", (item_deleting, session['user_id']))
-    db.execute("DELETE FROM groups_items WHERE item_id = ?", (item_deleting,))
     db.commit()
 
     close_db()
@@ -279,7 +278,6 @@ def remove_group():
         close_db()
         return redirect(url_for('my_groups'))
     
-    db.execute("DELETE FROM groups_items WHERE groups_id = ?", (group_deleting,))
     db.execute("DELETE FROM groups WHERE groups_id = ? AND user_id = ?", (group_deleting, session['user_id']))
     db.commit()
     close_db()
@@ -359,6 +357,32 @@ def add_to_group():
 
 
 
+@app.route("/remove_from_group", methods=['POST', 'GET'])
+@login_required
+def remove_from_group():
+
+    db = get_db()
+
+    item_to_remove = request.form['item_id']
+    group_removing_from = request.form['groups_id']
+
+    valid_item = db.execute("SELECT * FROM item WHERE item_id = ? AND user_id = ?", (item_to_remove, session['user_id'],)).fetchone()
+    valid_group = db.execute("SELECT * FROM groups WHERE groups_id = ? and user_id = ?", (group_removing_from, session['user_id'],)).fetchone()
+    if not valid_item or not valid_group:
+        flash('not valid item or group')
+        close_db()
+        return redirect(url_for('edit_groups'))
+
+    app.logger.error(item_to_remove)
+    app.logger.error(group_removing_from)
+    db.execute("DELETE FROM groups_items WHERE groups_id = ? AND item_id = ?", (group_removing_from, item_to_remove,))
+    db.commit()
+    close_db()
+    flash('item removed from group')
+    return redirect(url_for('edit_groups'))
+
+
+
 @app.route("/delete_account", methods=['GET', 'POST'])
 @login_required
 def delete_account():
@@ -385,13 +409,6 @@ def delete_account():
         return redirect(url_for('delete_account'))
 
 
-    # NEED TO DELETE ALL USER DATA BEFORE USER ACCOUNT
-
-    db.execute("DELETE FROM groups_items WHERE item_id IN (SELECT item_id FROM item WHERE user_id = ?)", (session['user_id'],))
-    db.execute("DELETE FROM item WHERE user_id = ?", (session['user_id'],))
-
-    db.execute("DELETE FROM groups_items WHERE groups_id IN (SELECT groups_id FROM groups WHERE user_id = ?)", (session['user_id'],))
-    db.execute("DELETE FROM groups WHERE user_id = ?", (session['user_id'],))
 
     db.execute("DELETE FROM users WHERE user_id = ?", (session['user_id'],))
 
@@ -402,6 +419,17 @@ def delete_account():
     flash("Account Deleted")
     return redirect(url_for('login'))
 
+
+
+@app.route("/edit_account", methods=['POST', 'GET'])
+@login_required
+def edit_account():
+    
+    if request.method == 'GET':
+        return render_template('edit_account.html')
+    
+    flash('post to edit account')    
+    return redirect(url_for('account'))
 
 
 

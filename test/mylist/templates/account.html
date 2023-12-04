@@ -35,26 +35,8 @@ Account page
         </div>
 
         
-        <button>Edit info</button>
+        <a href="/edit_account">Edit Account</a>
         <a href="/delete_account">Delete Account</a>
-        <div style="visibility: hidden;">
-
-            <form action="/" method="post">
-                <input type="reset" value="Clear">
-                <table>
-                    <tr>
-                        <th>Username</th>
-                        <th>Password</th>
-                        <th>Email</th>
-                    </tr>
-                    <tr>
-                        <td><input type="text"></td>
-                        <td><input type="password"></td>
-                        <td><input type="email"></td>
-                    </tr>
-                </table>
-            </form>
-        </div>
     </div>
     {% endfor %}
 </div>

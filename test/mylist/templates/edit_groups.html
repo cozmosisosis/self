@@ -16,6 +16,47 @@ Edit Groups Page
 <div>
     Edit Groups!
     <div>
+        
+        <div>
+            <br>
+        
+        
+            <form action="/add_to_group" method="post">
+        
+        
+                <label for="groups">Choose A Group:</label>
+                <select name="groups" id="groups">
+                    <option value="None" disabled selected>Group</option>
+        
+                    {% for group in groups %}
+                    <option value="{{ group['groups_id'] }}">{{ group['groups_name'] }}</option>
+                    {% endfor %}
+        
+                </select>
+        
+        
+                <label for="items">Choose An Item:</label>
+                <select name="items" id="items">
+                    <option value="None" disabled selected>Item</option>
+        
+                    {% for item in users_items %}
+                    <option value="{{ item['item_id'] }}">{{ item['item_name'] }}</option>
+                    {% endfor %}
+        
+                </select>
+        
+        
+                <label for="quantity">Choose Amount:</label>
+                <input name="quantity" id="quantity" type="number" value="1">
+        
+        
+                <input type="submit">
+        
+            </form>
+        
+        
+        
+        </div>
 
         <div>
             <table>
@@ -40,40 +81,41 @@ Edit Groups Page
 
 
                 <tr>
-
                     <td>{{ row['groups_id'] }}
-                    <td>{{ row['groups_name'] }}
-
+                    
+                    <td> <p>{{ row['groups_name'] }}
+                        <br>
+                        Ingredients:
+                        
                         {% for group in group_items %}
                         {% if group['groups_id'] == row['groups_id'] %}
                         <div>
-
-                            Ingredient:
+                            
                             {{ group['item_name']}}
-
-                            user id:
-                            {{ group['user_id']}}
+                            
                             
                             Quantity:
                             {{ group['quantity']}}
-                        </div>
 
+                            <form action="/remove_from_group" method="post">
+                                <input type="hidden" name="groups_id" value="{{ group['groups_id'] }}">
+                                <input type="hidden" name="item_id" value="{{ group['item_id'] }}">
+                                <input type="submit" value="Remove Item">
+                            </form>
+
+                        </div>
+                        
                         {% endif %}
                         {% endfor %}
+                    </p>
                     </td>
-
-
-
-
-
-
-
-                    <td>
-                        <form action="/remove_group" method="post">
-                            <input type="hidden" name="groups_id" value="{{ row['groups_id'] }}">
-                            <input type="submit" value="Remove">
-                        </form>
-                    </td>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
                 </tr>
 
 
@@ -83,46 +125,6 @@ Edit Groups Page
         </div>
 
 
-        <div>
-            <br>
-
-
-            <form action="/add_to_group" method="post">
-
-
-                <label for="groups">Choose A Group:</label>
-                <select name="groups" id="groups">
-                    <option value="None" disabled selected>Group</option>
-
-                    {% for group in groups %}
-                    <option value="{{ group['groups_id'] }}">{{ group['groups_name'] }}</option>
-                    {% endfor %}
-
-                </select>
-
-
-                <label for="items">Choose An Item:</label>
-                <select name="items" id="items">
-                    <option value="None" disabled selected>Item</option>
-
-                    {% for item in users_items %}
-                    <option value="{{ item['item_id'] }}">{{ item['item_name'] }}</option>
-                    {% endfor %}
-
-                </select>
-
-
-                <label for="quantity">Choose Amount:</label>
-                <input name="quantity" id="quantity" type="number" value="1">
-
-
-                <input type="submit">
-
-            </form>
-
-
-
-        </div>
 
 
 
