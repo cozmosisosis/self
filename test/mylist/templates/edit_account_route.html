@@ -1,0 +1,55 @@
+{% extends "loggedin_template.html" %}
+
+
+
+{% block title %}
+Edit Account
+{% endblock %}
+
+
+
+{% block main %}
+
+<div>
+    <br>
+    <p>
+        Please verify all info before submitting. If you make a mistake your accoount may not be able to be recovered.
+    </p>
+    <br>
+
+
+    <div>
+        <table>
+            <form >
+                <tr>
+                    <th>New {{ info_to_edit }}</th>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="hidden" name="value_edditing" value="{{ info_to_edit }}">
+                        <input type="text" name="new_value" placeholder="New {{ info_to_edit }}" autocomplete="off" autofocus>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Current Username</th>
+                    <th>Current Password</th>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" name="current_username" autocomplete="off" placeholder="Current Username" autofocus>
+                    </td>
+                    <td>
+                        <input type="password" name="current_password" autocomplete="off" placeholder="Current Password">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="submit" formaction="/edit_account/{{ info_to_edit }}" formmethod="post" value="Submit">
+                        <input type="reset" value="Clear">
+                    </td>
+                </tr>
+            </form>
+        </table>
+    </div>
+</div>
+{% endblock %}

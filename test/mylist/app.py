@@ -44,8 +44,29 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 
-
     db = get_db()
+
+    if request.method == 'GET':
+
+        if 'user_id' in session:
+            app.logger.error('testing')
+                    
+            session_user_id_valid = db.execute("SELECT * FROM users WHERE user_id = ?", (session['user_id'],)).fetchone()
+            if session_user_id_valid is None:
+                session.clear()
+                close_db()
+                return render_template('login.html')
+            flash('Logged in!')
+            db.execute('UPDATE users SET date_last_active = ? WHERE user_id = ?', (datetime.utcnow(), session['user_id']))
+            db.commit()
+            close_db()
+            return redirect(url_for('index'))
+        else:
+            close_db()
+            return render_template('login.html')
+
+
+
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
@@ -75,21 +96,10 @@ def login():
         flash(error)
         close_db()
         return redirect(url_for('login'))
-    else:
-        try:
-            if session['user_id'] is not None:
-                flash('Logged in!')
-                db.execute('UPDATE users SET date_last_active = ? WHERE user_id = ?', (datetime.utcnow(), session['user_id']))
-                db.commit()
-                close_db()
-                return redirect(url_for('index'))
-        except:
-            close_db()
-            return render_template('login.html')
 
-        
-    
-    
+
+
+
 
 
 @app.route("/logout", methods=['POST', 'GET'])
@@ -126,8 +136,7 @@ def register():
         elif not password == password_verification:
             error = 'Passwords do not match'
         elif not user_email:
-            flash('Email was not filled out. Please update your email for recovery purposes!')
-            user_email = 'N/A'
+            user_email = None
         elif not user_email == user_email_verification:
             error = 'Email and email verification do not match!'
 
@@ -143,6 +152,8 @@ def register():
                 error = f"User {username} is already registered."
             
             else:
+                if not user_email:
+                    flash('Please update email for account recovery.')
                 flash('Account created, Please Login!')
                 close_db()
                 return redirect(url_for('login'))
@@ -430,6 +441,30 @@ def edit_account():
     
     flash('post to edit account')    
     return redirect(url_for('account'))
+
+
+
+@app.route("/edit_account/<info_to_edit>", methods=['POST', 'GET'])
+@login_required
+def edit_account_route(info_to_edit):
+
+    valid_routes = ['username', 'password', 'email']
+
+    if info_to_edit not in valid_routes:
+        flash('Invalid info to edit')
+        return redirect(url_for('edit_account'))
+    
+    if request.method == 'GET':
+        return render_template('edit_account_route.html', info_to_edit=info_to_edit)
+        
+    if request.method == 'POST':
+
+        value_edditing = request.form['value_edditing']
+        new_value = request.form['new_value']
+        app.logger.error(new_value)
+        app.logger.error(value_edditing)
+        return "variable is %s" % info_to_edit
+
 
 
 
