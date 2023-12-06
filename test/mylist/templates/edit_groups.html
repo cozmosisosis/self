@@ -91,17 +91,31 @@ Edit Groups Page
                         {% if group['groups_id'] == row['groups_id'] %}
                         <div>
                             
-                            {{ group['item_name']}}
-                            
-                            
-                            Quantity:
-                            {{ group['quantity']}}
+                            <ul>
+                                <li>
+                                    <div>
+                                        <h4>
+                                            {{ group['item_name']}}
+                                        </h4>
+                                        <p>
+                                            Quantity:
+                                            {{ group['quantity']}}
+                                            <form action="/edit_quantity_in_group" method="post">
+                                                <input type="hidden" name="groups_id" value="{{ group['groups_id'] }}">
+                                                <input type="hidden" name="item_id" value="{{ group['item_id'] }}">
+                                                <input type="number" name="new_quantity" value="{{ group['quantity'] }}" style="width: 40px;">
+                                                <input type="submit" value="Change quantity">
+                                            </form>
+                                            <form action="/remove_from_group" method="post">
+                                                <input type="hidden" name="groups_id" value="{{ group['groups_id'] }}">
+                                                <input type="hidden" name="item_id" value="{{ group['item_id'] }}">
+                                                <input type="submit" value="Remove Item">
+                                            </form>
+                                        </p>
+                                    </div>
+                                </li>
+                            </ul>
 
-                            <form action="/remove_from_group" method="post">
-                                <input type="hidden" name="groups_id" value="{{ group['groups_id'] }}">
-                                <input type="hidden" name="item_id" value="{{ group['item_id'] }}">
-                                <input type="submit" value="Remove Item">
-                            </form>
 
                         </div>
                         

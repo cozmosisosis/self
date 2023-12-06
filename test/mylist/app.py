@@ -368,6 +368,52 @@ def add_to_group():
 
 
 
+@app.route("/edit_quantity_in_group", methods=['POST', 'GET'])
+@login_required
+def edit_quantity_in_group():
+
+    if request.method == 'GET':
+        flash('Route not valid for GET method')
+        return redirect(url_for('edit_groups'))
+    
+    db = get_db()
+
+    groups_id = request.form['groups_id']
+    item_id = request.form['item_id']
+    new_quantity = request.form['new_quantity']
+    
+    if not groups_id or not item_id or not new_quantity or int(new_quantity) < 0:
+        flash('Error Element of submition is not valid')
+        close_db()
+        return redirect(url_for('edit_groups'))
+    
+
+    valid_group = db.execute("SELECT * FROM groups WHERE groups_id = ? AND user_id = ?", (groups_id, session['user_id'],)).fetchone()
+    if not valid_group:
+        flash('Error with changing quantity of item in group, please try again')
+        close_db()
+        return redirect(url_for('edit_groups'))
+    
+
+    valid_item = db.execute("SELECT * FROM groups_items WHERE groups_id = ? AND item_id = ?", (groups_id, item_id,)).fetchone()
+    if not valid_item:
+        flash('Error with changing quantity of item in group, please try again')
+        close_db()
+        return redirect(url_for('edit_groups'))
+
+    new_quantity = int(new_quantity)
+    if new_quantity == 0:
+        db.execute("DELETE FROM groups_items WHERE groups_id = ? AND item_id = ?", (groups_id, item_id))
+    else:
+        db.execute("UPDATE groups_items SET quantity = ? WHERE groups_id = ? AND item_id = ?", (new_quantity, groups_id, item_id,))
+    db.commit()
+    close_db()
+
+    flash('tried editing quantity')
+    return redirect(url_for('edit_groups'))
+
+
+
 @app.route("/remove_from_group", methods=['POST', 'GET'])
 @login_required
 def remove_from_group():
