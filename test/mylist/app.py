@@ -448,6 +448,7 @@ def edit_account():
 @login_required
 def edit_account_route(info_to_edit):
 
+    db = get_db()
     valid_routes = ['username', 'password', 'email']
 
     if info_to_edit not in valid_routes:
@@ -461,9 +462,46 @@ def edit_account_route(info_to_edit):
 
         value_edditing = request.form['value_edditing']
         new_value = request.form['new_value']
-        app.logger.error(new_value)
-        app.logger.error(value_edditing)
-        return "variable is %s" % info_to_edit
+        current_username = request.form['current_username']
+        current_password = request.form['current_password']
+
+        if not new_value or not current_password or not current_username:
+            flash('All Fields must be filled out')
+            return redirect(f'/edit_account/{info_to_edit}')
+        
+        user = db.execute("SELECT * FROM users WHERE user_id = ?", (session['user_id'],)).fetchone()
+
+
+        if current_username != user['username'] or not check_password_hash(user['hashed_password'], current_password) or session['user_id'] != user['user_id']:
+            flash('Account not verified, please try again')
+            close_db()
+            return redirect(f'/edit_account/{info_to_edit}')
+
+
+        if value_edditing == 'username':
+            if user['username'] == new_value:
+                flash('Inputed new username is the same as old username')
+                close_db()
+                return redirect(f'/edit_account/{info_to_edit}')
+            db.execute("UPDATE users SET username = ? WHERE user_id = ?", (new_value, session['user_id'],))
+        elif value_edditing == 'password':
+            value_edditing = 'hashed_password'
+            if check_password_hash(user['hashed_password'], new_value):
+                flash('Inputed new password is the same as old password')
+                close_db()
+                return redirect(f'/edit_account/{info_to_edit}')
+            db.execute("UPDATE users SET hashed_password = ? WHERE user_id = ?", ( generate_password_hash(new_value), session['user_id'],))
+        elif value_edditing == 'email':
+            value_edditing = 'user_email'
+            if user['user_email'] == new_value:
+                flash('Inputed new email is the same as old email')
+                close_db()
+                return redirect(f'/edit_account/{info_to_edit}')
+            db.execute("UPDATE users SET user_email = ? WHERE user_id = ?", (new_value, session['user_id'],))
+
+        db.commit()
+        close_db()
+        return redirect(url_for('account'))
 
 
 
