@@ -28,17 +28,29 @@ def index():
             close_db()
             return redirect(url_for('login'))
 
+        users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
+        user_active_items = list(db.execute("SELECT * FROM user_active_items WHERE user_id = ?", (session['user_id'],)))
+        
         db.execute('UPDATE users SET date_last_active = ? WHERE user_id = ?', (datetime.utcnow(), session['user_id']))
         db.commit()
         close_db()
-        return render_template("index.html")
+        return render_template("index.html", users_items=users_items, user_active_items=user_active_items)
 
     error = 'login failure, user_id not found in session'
     flash(error)
     close_db()
     return redirect(url_for('login'))
     
-        
+
+    
+@app.route('/add_to_active_list', methods=['POST', 'GET'])
+@login_required
+def add_to_active_list():
+
+    if request.method == 'GET':
+        return redirect(url_for('index'))
+    
+    return 'Posting to add to active list'
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -195,7 +207,7 @@ def my_items():
     db = get_db()
     if request.method == 'GET':
         # render db info
-        item = db.execute("SELECT * FROM item WHERE user_id = ?", (session['user_id'],))
+        item = db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],))
         item = list(item)
         close_db()
         return render_template('my_items.html', item=item)
@@ -286,7 +298,7 @@ def my_groups():
 
     db = get_db()
     if request.method == 'GET':
-        groups = db.execute("SELECT * FROM groups WHERE user_id = ?", (session['user_id'],))
+        groups = db.execute("SELECT * FROM groups WHERE user_id = ? ORDER BY groups_name", (session['user_id'],))
         groups = list(groups)
         close_db()
         return render_template('my_groups.html', groups=groups)
@@ -379,12 +391,9 @@ def edit_groups():
     db = get_db()
     if request.method == 'GET':
 
-        groups = db.execute("SELECT * FROM groups WHERE user_id = ?", (session['user_id'],))
-        groups = list(groups)
-        group_items = db.execute("SELECT groups_items.groups_id, item.item_id, item.item_name, groups_items.quantity, item.user_id FROM item JOIN groups_items ON groups_items.item_id = item.item_id WHERE item.user_id = ?", (session['user_id'],))
-        group_items = list(group_items)
-        users_items = db.execute("SELECT * FROM item WHERE user_id = ?", (session['user_id'],))
-        users_items = list(users_items)
+        groups = list(db.execute("SELECT * FROM groups WHERE user_id = ? ORDER BY groups_name", (session['user_id'],)))
+        group_items = list(db.execute("SELECT groups_items.groups_id, item.item_id, item.item_name, groups_items.quantity, item.user_id FROM item JOIN groups_items ON groups_items.item_id = item.item_id WHERE item.user_id = ? ORDER BY item_name", (session['user_id'],)))
+        users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
 
         close_db()
         return render_template('edit_groups.html', groups=groups, group_items=group_items, users_items=users_items)

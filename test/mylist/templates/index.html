@@ -11,31 +11,37 @@ MyList Home Page
 Home Page
 
 
-    <div>
-        <table>
-            <tr>
-                <th>
-                    <p>Needs</p>
-                </th>
-                <th>
-                    <p>Stuff</p>
-                </th>
-                <th></th>
-                <th></th>
+<div>
+    <table>
+        <tr>
+            <th>
+                <p>Needs</p>
+            </th>
+            <th>
+                <p>Stuff</p>
+            </th>
+            <th></th>
+            <th></th>
 
-            </tr>
-            <tr>
-                <td>
-                    <p>Not sure</p>
-                </td>
-                <td>
-                    <p>What</p>
-                </td>
-                <td></td>
-                <td></td>
-            </tr>
-        </table>
+        </tr>
+    </table>
+
+    <div>
+        <form action="/add_to_active_list" method="post">
+
+            <label for="item_to_add">Add an item to your list:</label>
+            <input list="item" id="item_to_add" name="item_to_add" autocomplete="off"/>
+            <datalist id="item">
+                {% for row in users_items %}
+                <option value="{{ row['item_name'] }}"></option>
+                {% endfor %}
+            </datalist>
+            <input type="submit">
+        </form>
     </div>
+
+
+</div>
 </div>
 
 {% endblock %}
