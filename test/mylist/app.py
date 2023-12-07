@@ -196,6 +196,7 @@ def my_items():
     if request.method == 'GET':
         # render db info
         item = db.execute("SELECT * FROM item WHERE user_id = ?", (session['user_id'],))
+        item = list(item)
         close_db()
         return render_template('my_items.html', item=item)
         
@@ -242,6 +243,43 @@ def remove_item():
 
 
 
+@app.route("/change_item_name", methods=['GET', 'POST'])
+@login_required
+def change_item_name():
+
+    db = get_db()
+    if request.method == 'GET':
+        close_db()
+        return redirect(url_for('my_items'))
+    
+    item_id = request.form.get('item_id')
+    item_new_name = request.form.get('item_new_name')
+
+    if not item_id or not item_new_name:
+        flash('Item must be chosen and a new name must be submitted to change an items name')
+        close_db()
+        return redirect(url_for('my_items'))
+
+    valid_item = db.execute("SELECT * FROM item WHERE item_id = ? AND user_id = ?", (item_id, session['user_id'],)).fetchone()
+    if not valid_item:
+        flash('Error Invalid submission')
+        close_db()
+        return redirect(url_for('my_items'))
+
+    if valid_item['item_name'] == item_new_name:
+        flash('New item name is the same as old')
+        close_db()
+        return redirect(url_for('my_items'))
+
+    db.execute("UPDATE item SET item_name = ? WHERE item_id = ? AND user_id = ?", (item_new_name, item_id, session['user_id'],))
+    db.commit()
+
+    close_db()
+    flash('Item name changed')
+    return redirect(url_for('my_items'))
+
+
+
 @app.route("/my_groups", methods=['GET', 'POST'])
 @login_required
 def my_groups():
@@ -249,6 +287,7 @@ def my_groups():
     db = get_db()
     if request.method == 'GET':
         groups = db.execute("SELECT * FROM groups WHERE user_id = ?", (session['user_id'],))
+        groups = list(groups)
         close_db()
         return render_template('my_groups.html', groups=groups)
     new_group = request.form['group_name']
@@ -292,6 +331,43 @@ def remove_group():
     db.execute("DELETE FROM groups WHERE groups_id = ? AND user_id = ?", (group_deleting, session['user_id']))
     db.commit()
     close_db()
+    return redirect(url_for('my_groups'))
+
+
+
+@app.route("/change_group_name", methods=['GET', 'POST'])
+@login_required
+def change_group_name():
+
+    db = get_db()
+    if request.method == 'GET':
+        flash('invalid method')
+        close_db()
+        return redirect(url_for('my_groups'))
+    
+    groups_id = request.form.get('groups_id_for_name_change')
+    groups_new_name = request.form.get('groups_new_name')
+
+    if not groups_id or not groups_new_name:
+        flash('Must select and fill out all of form before submitting')
+        close_db()
+        return redirect(url_for('my_groups'))
+
+    valid_group = db.execute("SELECT * FROM groups WHERE groups_id = ? AND user_id = ?", (groups_id, session['user_id'],)).fetchone()
+    if not valid_group:
+        flash('Error Invalid submission')
+        close_db()
+        return redirect(url_for('my_groups'))
+
+    if valid_group['groups_name'] == groups_new_name:
+        flash('New name is the same as old')
+        close_db()
+        return redirect(url_for('my_groups'))
+
+    db.execute("UPDATE groups SET groups_name = ? WHERE groups_id = ? AND user_id = ?", (groups_new_name, groups_id, session['user_id'],))
+    db.commit()
+    close_db()
+    flash('changed group name')
     return redirect(url_for('my_groups'))
 
 
@@ -543,7 +619,10 @@ def edit_account_route(info_to_edit):
                 flash('Inputed new email is the same as old email')
                 close_db()
                 return redirect(f'/edit_account/{info_to_edit}')
-            db.execute("UPDATE users SET user_email = ? WHERE user_id = ?", (new_value, session['user_id'],))
+            try:
+                db.execute("UPDATE users SET user_email = ? WHERE user_id = ?", (new_value, session['user_id'],))
+            except:
+                flash('Unable to add email, email already associated with an account')
 
         db.commit()
         close_db()

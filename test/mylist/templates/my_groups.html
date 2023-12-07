@@ -19,12 +19,9 @@ My Groups Page
         <div>
             <form action="/my_groups" method="post">
                 <table>
-                    <div>
-                        <p>Create Group</p>
-                    </div>
                     <tr>
                         <th>
-                            <p>Group Name</p>
+                            <p>Add Group</p>
                         </th>
                     </tr>
                     <tr>
@@ -36,6 +33,36 @@ My Groups Page
                     </tr>
                 </table>
             </form>
+        </div>
+
+        <div>
+            <form action="/change_group_name" method="post">
+                <table>
+                    <tr>
+                        <th>
+                            <p>Rename Group</p>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="groups_id_for_name_change">Select Group:</label>
+                            <select name="groups_id_for_name_change" id="groups_id_for_name_change">
+                                <option value="None" disabled selected>Groups</option>
+    
+                                {% for row in groups %}
+                                <option value="{{ row['groups_id'] }}">{{ row['groups_name'] }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <label for="groups_new_name">Choose new name</label>
+                            <input type="text" id="groups_new_name" name="groups_new_name" placeholder="New Name">
+                        </td>
+                        <td>
+                            <input type="submit">
+                        </td>
+                    </tr>
+                </table>
         </div>
 
         <div>

@@ -16,12 +16,9 @@ My items page!
     <div>
         <form action="/my_items" method="post">
             <table>
-                <div>
-                    <p>Add Items</p>
-                </div>
                 <tr>
                     <th>
-                        <p>Item Name</p>
+                        <p>Add item</p>
                     </th>
                 </tr>
                 <tr>
@@ -33,12 +30,48 @@ My items page!
             </table>
         </form>
     </div>
+    <br>
+    <div>
 
+        <form action="/change_item_name" method="post">
+            <table>
+                <tr>
+                    <th>
+                        <p>Rename Item</p>
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="item_id">Select Item:</label>
+                        <select name="item_id" id="item_id">
+                            <option value="None" disabled selected>Items</option>
+
+                            {% for row in item %}
+                            <option value="{{ row['item_id'] }}">{{ row['item_name'] }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <label for="item_new_name">Choose new name</label>
+                        <input type="text" id="item_new_name" name="item_new_name" placeholder="New Name">
+                    </td>
+                    <td>
+                        <input type="submit">
+                    </td>
+                </tr>
+            </table>
+
+        </form>
+    </div>
+    <br>
     <div>
         <table>
-            <div>
-                <p>My Items</p>
-            </div>
+            <tr>
+                <th>
+                    My Items
+                </th>
+            </tr>
+
             <tr>
                 <th>
                     <p>Item</p>
