@@ -29,7 +29,7 @@ def index():
             return redirect(url_for('login'))
 
         users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
-        user_active_items = list(db.execute("SELECT * FROM user_active_items WHERE user_id = ?", (session['user_id'],)))
+        user_active_items = list(db.execute("SELECT * FROM user_active_items JOIN item ON user_active_items.item_id = item.item_id WHERE user_active_items.user_id = ?", (session['user_id'],)))
         
         db.execute('UPDATE users SET date_last_active = ? WHERE user_id = ?', (datetime.utcnow(), session['user_id']))
         db.commit()
@@ -47,10 +47,110 @@ def index():
 @login_required
 def add_to_active_list():
 
+    db = get_db()
+
+    if request.method == 'GET':
+        close_db()
+        return redirect(url_for('index'))
+
+    item_to_add = request.form['item_to_add'].strip()
+    quantity_to_add = request.form['quantity']
+    quantity_to_add_int = int(quantity_to_add)
+    if not item_to_add or not quantity_to_add or quantity_to_add_int < 1:
+        flash('Input must not be empty and quantity must be valid')
+        close_db()
+        return redirect(url_for('index'))
+
+    valid_item = db.execute("SELECT * FROM item WHERE user_id = ? AND item_name = ? COLLATE NOCASE", (session['user_id'], item_to_add,)).fetchone()
+    if not valid_item:
+        db.execute("INSERT INTO item (user_id, item_name) VALUES (?, ?)", (session['user_id'], item_to_add,))
+        db.commit()
+        new_item = db.execute("SELECT * FROM item WHERE user_id = ? AND item_name = ?", (session['user_id'], item_to_add)).fetchone()
+        db.execute("INSERT INTO user_active_items (user_id, item_id, active_items_quantity) VALUES (?, ?, ?)", (session['user_id'], new_item['item_id'], quantity_to_add_int,))
+        db.commit()
+        close_db()
+        return redirect(url_for('index'))
+
+    item_on_list = db.execute("SELECT * FROM user_active_items WHERE user_id = ? AND item_id = ?", (session['user_id'], valid_item['item_id'])).fetchone()
+    if item_on_list:
+        new_quantity = item_on_list['active_items_quantity'] + quantity_to_add_int
+        db.execute("UPDATE user_active_items SET active_items_quantity = ? WHERE user_id = ? AND item_id = ?", (new_quantity, session['user_id'], valid_item['item_id'],))
+        db.commit()
+        close_db()
+        return redirect(url_for('index'))
+
+    db.execute("INSERT INTO user_active_items (user_id, item_id, active_items_quantity) VALUES (?, ?, ?)", (session['user_id'], valid_item['item_id'], quantity_to_add_int))
+    db.commit()
+    close_db()
+    return redirect(url_for('index'))
+
+
+
+@app.route('/remove_from_active_list', methods=['GET', 'POST'])
+@login_required
+def remove_from_active_list():
+
+    db = get_db()
+
+    if request.method == 'GET':
+        flash('Invalid route')
+        close_db()
+        return redirect(url_for('index'))
+    
+    active_item_removing = request.form['user_active_items_id']
+    app.logger.error(active_item_removing)
+    if not active_item_removing:
+        flash('Error removing item, please try again')
+        close_db()
+        return redirect(url_for('index'))
+    
+    valid_active_item = db.execute("SELECT * FROM user_active_items WHERE user_id = ? AND user_active_items_id = ?", (session['user_id'], active_item_removing)).fetchone()
+    if not valid_active_item:
+        flash('Invalid item to remove please try again')
+        close_db()
+        return redirect(url_for('index'))
+    db.execute("DELETE FROM user_active_items WHERE user_id = ? AND user_active_items_id = ?", (session['user_id'], active_item_removing,))
+    db.commit()
+    close_db()
+
+    return redirect(url_for('index'))
+
+
+
+@app.route('/change_quantity_on_active_list', methods=['GET', 'POST'])
+@login_required
+def change_quantity_on_active_list():
+
+    db = get_db()
     if request.method == 'GET':
         return redirect(url_for('index'))
     
-    return 'Posting to add to active list'
+    item_id = request.form['item_id']
+    new_quantity = request.form['new_quantity']
+    new_quantity_int = int(new_quantity)
+
+    if not item_id or not new_quantity or new_quantity_int < 0:
+        flash('Invalid input')
+        return redirect(url_for('index'))
+    
+    valid_item = db.execute("SELECT * FROM user_active_items WHERE user_id = ? AND item_id = ?", (session['user_id'], item_id,)).fetchone()
+    if not valid_item:
+        flash('Error invalid item')
+        close_db()
+        return redirect(url_for('index'))
+    
+    if new_quantity_int == 0:
+        db.execute("DELETE FROM user_active_items WHERE user_id = ? AND item_id = ?", (session['user_id'], item_id,))
+        db.commit()
+        close_db()
+        flash('Item quantity set to 0, Item removed')
+        return redirect(url_for('index'))
+    db.execute("UPDATE user_active_items SET active_items_quantity = ? WHERE user_id = ? AND item_id = ?", (new_quantity_int, session['user_id'], item_id,))
+    db.commit()
+    close_db()
+    flash('quantity updated')
+    return redirect(url_for('index'))
+
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -217,7 +317,7 @@ def my_items():
         close_db()
         return redirect(url_for('my_items'))
 
-    new_item_name = request.form['item_name']
+    new_item_name = request.form['item_name'].strip()
     item_exists = db.execute("SELECT * FROM item WHERE item_name = ? AND user_id = ?", (new_item_name, session['user_id'],)).fetchone()
     if item_exists:
         flash('Item already exists')
@@ -302,7 +402,7 @@ def my_groups():
         groups = list(groups)
         close_db()
         return render_template('my_groups.html', groups=groups)
-    new_group = request.form['group_name']
+    new_group = request.form['group_name'].strip()
     
     if not new_group:
         flash('Group Name Not Filled out!')
