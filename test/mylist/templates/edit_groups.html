@@ -81,7 +81,7 @@ Edit Groups Page
 
 
                 <tr>
-                    <td>{{ row['groups_id'] }}
+                    <td>{{ row['groups_id'] }}</td>
                     
                     <td> <p>{{ row['groups_name'] }}
                         <br>
@@ -122,6 +122,12 @@ Edit Groups Page
                         {% endif %}
                         {% endfor %}
                     </p>
+                    </td>
+                    <td>
+                        <form action="/add_from_group_verification" method="post">
+                            <input type="hidden" name="group_id" id="group_id" value="{{ row['groups_id'] }}">
+                            <input type="submit" value="Add all Ingredients">
+                        </form>
                     </td>
                     
                     

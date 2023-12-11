@@ -1,0 +1,75 @@
+{% extends "loggedin_template.html" %}
+
+
+
+
+
+{% block title %}
+Verify items adding from Group Page
+{% endblock %}
+
+
+
+
+
+{% block main %}
+<div>
+    Verify items and quantity adding to list!
+    <div>
+        
+
+        <div>
+            <table>
+                <div>
+                    <p>Group</p>
+                </div>
+
+
+                
+                <form action="/add_from_group" method="post">
+                        {% for group in groups_items %}
+                        
+                        <div>
+                            
+                            <ul>
+                                <li>
+                                    <div>
+                                        <h4>
+                                            {{ group['item_name']}}
+                                        </h4>
+                                        <p>
+                                            Quantity:
+                                                <input type="number" name="{{ group['item_id'] }}" value="{{ group['quantity'] }}" style="width: 40px;">
+                                            </p>
+                                        </div>
+                                    </li>
+                                </ul>
+                                
+                                
+                            </div>
+                            
+                            {% endfor %}
+                            <input type="submit" value="Add all">
+                        </form>
+                    </p>
+                    </td>
+                    
+                    
+                    
+                </tr>
+
+
+
+            </table>
+        </div>
+
+
+
+
+
+    </div>
+</div>
+
+
+
+{% endblock %}

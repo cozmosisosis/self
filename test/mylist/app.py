@@ -43,9 +43,9 @@ def index():
     
 
     
-@app.route('/add_to_active_list', methods=['POST', 'GET'])
+@app.route('/add_to_active_list_individual', methods=['POST', 'GET'])
 @login_required
-def add_to_active_list():
+def add_to_active_list_individual():
 
     db = get_db()
 
@@ -63,6 +63,7 @@ def add_to_active_list():
 
     valid_item = db.execute("SELECT * FROM item WHERE user_id = ? AND item_name = ? COLLATE NOCASE", (session['user_id'], item_to_add,)).fetchone()
     if not valid_item:
+        # case where item did not previously exist
         db.execute("INSERT INTO item (user_id, item_name) VALUES (?, ?)", (session['user_id'], item_to_add,))
         db.commit()
         new_item = db.execute("SELECT * FROM item WHERE user_id = ? AND item_name = ?", (session['user_id'], item_to_add)).fetchone()
@@ -83,6 +84,72 @@ def add_to_active_list():
     db.commit()
     close_db()
     return redirect(url_for('index'))
+
+
+
+@app.route('/add_from_group', methods=['POST', 'GET'])
+@login_required
+def add_from_group():
+
+    db = get_db()
+
+    if request.method == 'GET':
+        close_db()
+        return redirect(url_for('edit_groups'))
+    
+    items = request.form
+    for key in items:
+        valid_item = db.execute("SELECT * FROM item WHERE user_id = ? AND item_id = ?", (session['user_id'], key,)).fetchone()
+        if not valid_item:
+            flash('Invalid Item in submission')
+            close_db()
+            return redirect(url_for('edit_groups'))
+        if int(items[key]) < 0:
+            flash('Invalid quantity in submission. Quantity can not be less than 0')
+            close_db()
+            return redirect(url_for('edit_groups'))
+
+
+    for key in items:
+        item_in_list = db.execute("SELECT * FROM user_active_items WHERE user_id = ? AND item_id = ?", (session['user_id'], key)).fetchone()
+
+        if not item_in_list:
+            db.execute("INSERT INTO user_active_items (user_id, item_id, active_items_quantity) VALUES (?, ?, ?)", (session['user_id'], key, int(items[key])))
+            db.commit()
+        else:
+            new_quantity = int(items[key]) + item_in_list['active_items_quantity']
+            db.execute("UPDATE user_active_items SET active_items_quantity = ? WHERE user_id = ? AND item_id = ?", (new_quantity, session['user_id'], key))
+            db.commit()
+
+            
+    close_db()
+    flash('items added')
+    return redirect(url_for('index'))
+
+
+
+@app.route('/add_from_group_verification', methods=['POST', 'GET'])
+@login_required
+def add_from_group_verification():
+
+    if request.method == 'GET':
+        return redirect(url_for('edit_groups'))
+    group_id = request.form['group_id']
+
+    if not group_id:
+        flash('Error with group id')
+        return redirect(url_for('edit_groups'))
+
+    db = get_db()
+    
+    valid_group = db.execute("SELECT * FROM groups WHERE user_id = ? AND groups_id = ?", (session['user_id'], group_id)).fetchone()
+    if not valid_group:
+        flash('Invalid Group')
+        close_db()
+        return redirect(url_for('edit_groups'))
+    groups_items = list(db.execute("SELECT * FROM groups_items JOIN item ON groups_items.item_id = item.item_id WHERE groups_id = ?", (group_id,)))
+    close_db()
+    return render_template('add_from_group_verification.html', groups_items=groups_items)
 
 
 
