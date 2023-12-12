@@ -113,13 +113,14 @@ def add_from_group():
     for key in items:
         item_in_list = db.execute("SELECT * FROM user_active_items WHERE user_id = ? AND item_id = ?", (session['user_id'], key)).fetchone()
 
-        if not item_in_list:
-            db.execute("INSERT INTO user_active_items (user_id, item_id, active_items_quantity) VALUES (?, ?, ?)", (session['user_id'], key, int(items[key])))
-            db.commit()
-        else:
-            new_quantity = int(items[key]) + item_in_list['active_items_quantity']
-            db.execute("UPDATE user_active_items SET active_items_quantity = ? WHERE user_id = ? AND item_id = ?", (new_quantity, session['user_id'], key))
-            db.commit()
+        if int(items[key]) != 0:
+            if not item_in_list:
+                db.execute("INSERT INTO user_active_items (user_id, item_id, active_items_quantity) VALUES (?, ?, ?)", (session['user_id'], key, int(items[key])))
+                db.commit()
+            else:
+                new_quantity = int(items[key]) + item_in_list['active_items_quantity']
+                db.execute("UPDATE user_active_items SET active_items_quantity = ? WHERE user_id = ? AND item_id = ?", (new_quantity, session['user_id'], key))
+                db.commit()
 
             
     close_db()
