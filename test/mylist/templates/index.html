@@ -26,11 +26,12 @@ Home Page
         </tr>
     </table>
 
+    
     <div>
         <form action="/add_to_active_list_individual" method="post">
 
             <label for="item_to_add">Add an item to your list:</label>
-            <input list="item" id="item_to_add" name="item_to_add" autocomplete="off"/>
+            <input list="item" id="item_to_add" name="item_to_add" autocomplete="off" />
             <datalist id="item" name="item">
                 {% for row in users_items %}
                 <option value="{{ row['item_name'] }}"></option>
@@ -42,6 +43,21 @@ Home Page
         </form>
     </div>
 
+    <div>
+        <form action="/add_from_group_verification" method="post">
+
+            <label for="group_id">Add all items from group:</label>
+            <select name="group_id" id="group_id">
+                <option value="None" selected disabled>Group</option>
+                {% for groups in users_groups %}
+                <option value="{{ groups['groups_id'] }}">{{ groups['groups_name'] }}</option>
+                {% endfor %}
+                
+            </select>
+            <input type="submit" value="Add all Ingredients From Group">
+        </form>
+    </div>
+    
     <br>
     <div>
         <table>
@@ -59,7 +75,7 @@ Home Page
                     {% if rows['groups_id'] is not none %}
 
                     {% for group in users_groups %}
-                    
+
                     {% if group['groups_id'] == rows['groups_id'] %}
 
                     {{ group['groups_name'] }}
@@ -77,13 +93,15 @@ Home Page
                 <td>
                     <form action="/change_quantity_on_active_list" method="post">
                         <input type="hidden" name="item_id" id="item_id" value="{{ rows['item_id'] }}">
-                        <input type="number" name="new_quantity" id="new_quantity" style="width: 40px;" value="{{ rows['active_items_quantity'] }}">
+                        <input type="number" name="new_quantity" id="new_quantity" style="width: 40px;"
+                            value="{{ rows['active_items_quantity'] }}">
                         <input type="submit" value="Change Quantity">
                     </form>
                 </td>
                 <td>
                     <form action="/remove_from_active_list" method="post">
-                        <input type="hidden" name="user_active_items_id" id="user_active_items_id" value="{{ rows['user_active_items_id'] }}">
+                        <input type="hidden" name="user_active_items_id" id="user_active_items_id"
+                            value="{{ rows['user_active_items_id'] }}">
                         <input type="submit" value="Remove From List">
                     </form>
                 </td>
@@ -93,9 +111,10 @@ Home Page
     </div>
 
 
-        
+
 
 </div>
+<script src="{{ url_for('static', filename='script_mylist_homepage.js') }}"></script>
 </div>
 
 {% endblock %}

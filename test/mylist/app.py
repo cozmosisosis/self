@@ -141,7 +141,7 @@ def add_from_group_verification():
 
     if request.method == 'GET':
         return redirect(url_for('edit_groups'))
-    group_id = request.form['group_id']
+    group_id = request.form.get('group_id')
 
     if not group_id:
         flash('Error with group id')
@@ -156,6 +156,12 @@ def add_from_group_verification():
         return redirect(url_for('edit_groups'))
     groups_items = list(db.execute("SELECT * FROM groups_items JOIN item ON groups_items.item_id = item.item_id WHERE groups_id = ?", (group_id,)))
     close_db()
+    app.logger.error(len(groups_items))
+
+    if len(groups_items) == 0:
+        flash('Group has no items')
+        return redirect(url_for('edit_groups'))
+    
     return render_template('add_from_group_verification.html', groups_items=groups_items)
 
 
