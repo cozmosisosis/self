@@ -27,14 +27,14 @@ def index():
             flash(error)
             close_db()
             return redirect(url_for('login'))
-
+        users_groups = list(db.execute("SELECT * FROM groups WHERE user_id = ?", (session['user_id'],)))
         users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
-        user_active_items = list(db.execute("SELECT * FROM user_active_items JOIN item ON user_active_items.item_id = item.item_id WHERE user_active_items.user_id = ?", (session['user_id'],)))
+        user_active_items = list(db.execute("SELECT * FROM user_active_items JOIN item ON user_active_items.item_id = item.item_id WHERE user_active_items.user_id = ? ORDER BY item.item_name", (session['user_id'],)))
         
         db.execute('UPDATE users SET date_last_active = ? WHERE user_id = ?', (datetime.utcnow(), session['user_id']))
         db.commit()
         close_db()
-        return render_template("index.html", users_items=users_items, user_active_items=user_active_items)
+        return render_template("index.html", users_items=users_items, user_active_items=user_active_items, users_groups=users_groups)
 
     error = 'login failure, user_id not found in session'
     flash(error)
@@ -72,7 +72,7 @@ def add_to_active_list_individual():
         close_db()
         return redirect(url_for('index'))
 
-    item_on_list = db.execute("SELECT * FROM user_active_items WHERE user_id = ? AND item_id = ?", (session['user_id'], valid_item['item_id'])).fetchone()
+    item_on_list = db.execute("SELECT * FROM user_active_items WHERE user_id = ? AND item_id = ? AND groups_id IS NULL", (session['user_id'], valid_item['item_id'], )).fetchone()
     if item_on_list:
         new_quantity = item_on_list['active_items_quantity'] + quantity_to_add_int
         db.execute("UPDATE user_active_items SET active_items_quantity = ? WHERE user_id = ? AND item_id = ?", (new_quantity, session['user_id'], valid_item['item_id'],))
@@ -99,28 +99,34 @@ def add_from_group():
     
     items = request.form
     for key in items:
-        valid_item = db.execute("SELECT * FROM item WHERE user_id = ? AND item_id = ?", (session['user_id'], key,)).fetchone()
-        if not valid_item:
-            flash('Invalid Item in submission')
-            close_db()
-            return redirect(url_for('edit_groups'))
-        if int(items[key]) < 0:
-            flash('Invalid quantity in submission. Quantity can not be less than 0')
-            close_db()
-            return redirect(url_for('edit_groups'))
+        if key != 'groups_id':
+            
+            valid_item = db.execute("SELECT * FROM item WHERE user_id = ? AND item_id = ?", (session['user_id'], key,)).fetchone()
+            if not valid_item:
+                flash('Invalid Item in submission')
+                close_db()
+                return redirect(url_for('edit_groups'))
+            if int(items[key]) < 0:
+                flash('Invalid quantity in submission. Quantity can not be less than 0')
+                close_db()
+                return redirect(url_for('edit_groups'))
+        else:
+            groups_id = items[key]
 
 
     for key in items:
-        item_in_list = db.execute("SELECT * FROM user_active_items WHERE user_id = ? AND item_id = ?", (session['user_id'], key)).fetchone()
+        if key != 'groups_id':
 
-        if int(items[key]) != 0:
-            if not item_in_list:
-                db.execute("INSERT INTO user_active_items (user_id, item_id, active_items_quantity) VALUES (?, ?, ?)", (session['user_id'], key, int(items[key])))
-                db.commit()
-            else:
-                new_quantity = int(items[key]) + item_in_list['active_items_quantity']
-                db.execute("UPDATE user_active_items SET active_items_quantity = ? WHERE user_id = ? AND item_id = ?", (new_quantity, session['user_id'], key))
-                db.commit()
+            item_in_list = db.execute("SELECT * FROM user_active_items WHERE user_id = ? AND item_id = ? AND groups_id = ?", (session['user_id'], key, groups_id)).fetchone()
+
+            if int(items[key]) != 0:
+                if not item_in_list:
+                    db.execute("INSERT INTO user_active_items (user_id, item_id, groups_id, active_items_quantity) VALUES (?, ?, ?, ?)", (session['user_id'], key, groups_id, int(items[key])))
+                    db.commit()
+                else:
+                    new_quantity = int(items[key]) + item_in_list['active_items_quantity']
+                    db.execute("UPDATE user_active_items SET active_items_quantity = ? WHERE user_id = ? AND item_id = ? AND groups_id = ?", (new_quantity, session['user_id'], key, groups_id))
+                    db.commit()
 
             
     close_db()

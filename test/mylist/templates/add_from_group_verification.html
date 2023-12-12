@@ -21,12 +21,12 @@ Verify items adding from Group Page
         <div>
             <table>
                 <div>
-                    <p>Group</p>
+                    <p>Group {{ groups_items[0]['groups_id'] }}</p>
                 </div>
 
 
-                
                 <form action="/add_from_group" method="post">
+                        <input type="hidden" name="groups_id" id="groups_id" value="{{ groups_items[0]['groups_id'] }}">
                         {% for group in groups_items %}
                         
                         <div>
