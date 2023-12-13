@@ -1,7 +1,7 @@
 import os, logging, sqlite3
 from datetime import datetime
 from helpers import login_required, get_db, close_db
-from flask import Flask, flash, render_template, redirect, session, request, url_for
+from flask import Flask, flash, jsonify, render_template, redirect, session, request, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
@@ -816,6 +816,65 @@ def edit_account_route(info_to_edit):
         db.commit()
         close_db()
         return redirect(url_for('account'))
+
+
+
+
+
+@app.route('/ajax_test')
+@login_required
+def ajax_test():
+
+    db = get_db()
+    if request.method == 'GET':
+
+        groups = list(db.execute("SELECT * FROM groups WHERE user_id = ? ORDER BY groups_name", (session['user_id'],)))
+        group_items = list(db.execute("SELECT groups_items.groups_id, item.item_id, item.item_name, groups_items.quantity, item.user_id, groups_items.groups_items_id FROM item JOIN groups_items ON groups_items.item_id = item.item_id WHERE item.user_id = ? ORDER BY item_name", (session['user_id'],)))
+        users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
+
+        close_db()
+        return render_template('ajax_test.html', groups=groups, group_items=group_items, users_items=users_items)
+    close_db()
+    return redirect(url_for('ajax_test'))
+
+
+@app.route('/ajax_test_submit')
+@login_required
+def ajax_test_submit():
+
+    db = get_db()
+    groups_items_id = request.args.get('id')
+    value = int(request.args.get('value'))
+    app.logger.error(groups_items_id)
+
+    valid_groups_item = db.execute("SELECT * FROM groups_items JOIN groups ON groups_items.groups_id = groups.groups_id WHERE groups.user_id = ? AND groups_items.groups_items_id = ?", (session['user_id'], groups_items_id)).fetchone()
+    if valid_groups_item:
+        app.logger.error('item found')
+    else:
+        app.logger.error('item NOT found')
+        response = {'error': 'item not found'}
+        flash('Error with changing quantity please try again')
+        close_db()
+        return jsonify(response)
+
+    if value > 0:
+        app.logger.error('valid value')
+    else:
+        db.execute("DELETE FROM groups_items WHERE groups_items_id = ?", (groups_items_id,))
+        db.commit()
+        app.logger.error('invalid value')
+        response = {'error': 'item removed'}
+        flash('item removed from group')
+        close_db()
+        return jsonify(response)
+    
+
+
+    response = {'id': groups_items_id, 'quantity': value}
+    return jsonify(response)
+
+
+
 
 
 
