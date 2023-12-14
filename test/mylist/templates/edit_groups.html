@@ -1,18 +1,14 @@
 {% extends "loggedin_template.html" %}
 
 
-
-
-
 {% block title %}
 Edit Groups Page
 {% endblock %}
 
 
 
-
-
 {% block main %}
+<script src="{{ url_for('static', filename='script_mylist_edit_groups.js') }}"></script>
 <div>
     Edit Groups!
     <div>
@@ -58,90 +54,11 @@ Edit Groups Page
         
         </div>
 
-        <div>
-            <table>
-                <div>
-                    <p>My Groups</p>
-                </div>
-                <tr>
-                    <th>
-                        <p>Group id</p>
-                    </th>
-                    <th>
-                        <p>Group Name</p>
-                    </th>
-
-                </tr>
 
 
-                {% for row in groups %}
-
-
-
-
-
-                <tr>
-                    <td>{{ row['groups_id'] }}</td>
-                    
-                    <td> <p>{{ row['groups_name'] }}
-                        <br>
-                        Ingredients:
-                        
-                        {% for group in group_items %}
-                        {% if group['groups_id'] == row['groups_id'] %}
-                        <div>
-                            
-                            <ul>
-                                <li>
-                                    <div>
-                                        <h4>
-                                            {{ group['item_name']}}
-                                        </h4>
-                                        <p>
-                                            Quantity:
-                                            {{ group['quantity']}}
-                                            <form action="/edit_quantity_in_group" method="post">
-                                                <input type="hidden" name="groups_id" value="{{ group['groups_id'] }}">
-                                                <input type="hidden" name="item_id" value="{{ group['item_id'] }}">
-                                                <input type="number" name="new_quantity" value="{{ group['quantity'] }}" style="width: 40px;">
-                                                <input type="submit" value="Change quantity">
-                                            </form>
-                                            <form action="/remove_from_group" method="post">
-                                                <input type="hidden" name="groups_id" value="{{ group['groups_id'] }}">
-                                                <input type="hidden" name="item_id" value="{{ group['item_id'] }}">
-                                                <input type="submit" value="Remove Item">
-                                            </form>
-                                        </p>
-                                    </div>
-                                </li>
-                            </ul>
-
-
-                        </div>
-                        
-                        {% endif %}
-                        {% endfor %}
-                    </p>
-                    </td>
-                    <td>
-                        <form action="/add_from_group_verification" method="post">
-                            <input type="hidden" name="group_id" id="group_id" value="{{ row['groups_id'] }}">
-                            <input type="submit" value="Add all Ingredients">
-                        </form>
-                    </td>
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                </tr>
-
-
-
-                {% endfor %}
-            </table>
+        
+        <div id="groups_table">
+           
         </div>
 
 
