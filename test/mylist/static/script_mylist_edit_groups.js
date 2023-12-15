@@ -17,7 +17,7 @@ $(document).ready(function() {
 
 
 
-function testing(id) {
+function update_quantity(id) {
     value = $("#" + id).val()
     if (value === "") {
         console.log('Current quantity value is empty')

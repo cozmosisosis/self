@@ -1,0 +1,41 @@
+<div id="index_table">
+    <table>
+        <tr>
+            <th>Item Name</th>
+            <th>Origin</th>
+            <th>Quantity</th>
+        </tr>
+        {% for rows in user_active_items %}
+        <tr>
+            <td>
+                {{ rows['item_name'] }}
+            </td>
+            <td>
+                {% if rows['groups_id'] is not none %}
+                {% for group in users_groups %}
+                {% if group['groups_id'] == rows['groups_id'] %}
+
+
+
+                {{ group['groups_name'] }}
+
+                
+                
+                {% endif %}
+                {% endfor %}
+                {% endif %}
+
+            </td>
+            <td>
+                {{ rows['active_items_quantity'] }}
+            </td>
+            <td>
+                <input type="number" onchange="change_quantity(this.id)" onkeyup="change_quantity(this.id)"
+                    onclick="this.select();"
+                    id="{{ rows['user_active_items_id'] }}" style="width: 40px;"
+                    value="{{ rows['active_items_quantity'] }}">
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>

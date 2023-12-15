@@ -795,7 +795,7 @@ def change_quantity_in_group():
         group_items = list(db.execute("SELECT groups_items.groups_id, item.item_id, item.item_name, groups_items.quantity, item.user_id, groups_items.groups_items_id FROM item JOIN groups_items ON groups_items.item_id = item.item_id WHERE item.user_id = ? ORDER BY item_name", (session['user_id'],)))
         users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
         close_db()
-        return jsonify(render_template('ajax_test_element.html', groups=groups, group_items=group_items, users_items=users_items))
+        return jsonify(render_template('ajax_edit_groups.html', groups=groups, group_items=group_items, users_items=users_items))
 
     value = int(value)
     if value > 0:
@@ -805,7 +805,7 @@ def change_quantity_in_group():
         group_items = list(db.execute("SELECT groups_items.groups_id, item.item_id, item.item_name, groups_items.quantity, item.user_id, groups_items.groups_items_id FROM item JOIN groups_items ON groups_items.item_id = item.item_id WHERE item.user_id = ? ORDER BY item_name", (session['user_id'],)))
         users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
         close_db()
-        return jsonify(render_template('ajax_test_element.html', groups=groups, group_items=group_items, users_items=users_items))
+        return jsonify(render_template('ajax_edit_groups.html', groups=groups, group_items=group_items, users_items=users_items))
 
     else:
         db.execute("DELETE FROM groups_items WHERE groups_items_id = ?", (groups_items_id,))
@@ -814,9 +814,91 @@ def change_quantity_in_group():
         group_items = list(db.execute("SELECT groups_items.groups_id, item.item_id, item.item_name, groups_items.quantity, item.user_id, groups_items.groups_items_id FROM item JOIN groups_items ON groups_items.item_id = item.item_id WHERE item.user_id = ? ORDER BY item_name", (session['user_id'],)))
         users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
         close_db()
-        return jsonify(render_template('ajax_test_element.html', groups=groups, group_items=group_items, users_items=users_items))
+        return jsonify(render_template('ajax_edit_groups.html', groups=groups, group_items=group_items, users_items=users_items))
 
 
+
+
+
+
+
+@app.route('/ajax_test')
+@login_required
+def ajax_test():
+
+    db = get_db()
+
+    if 'user_id' in session:
+        error = None
+        user = db.execute('SELECT * FROM users WHERE user_id = ?', (session['user_id'],)).fetchone()
+
+        if not user:
+            error = "Failure retreving user account info please try logging on again"
+            flash(error)
+            close_db()
+            return redirect(url_for('login'))
+        users_groups = list(db.execute("SELECT * FROM groups WHERE user_id = ?", (session['user_id'],)))
+        users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
+        user_active_items = list(db.execute("SELECT * FROM user_active_items JOIN item ON user_active_items.item_id = item.item_id WHERE user_active_items.user_id = ? ORDER BY item.item_name", (session['user_id'],)))
+        
+        db.execute('UPDATE users SET date_last_active = ? WHERE user_id = ?', (datetime.utcnow(), session['user_id']))
+        db.commit()
+        close_db()
+        return render_template("ajax_test.html", users_items=users_items, user_active_items=user_active_items, users_groups=users_groups)
+
+    error = 'login failure, user_id not found in session'
+    flash(error)
+    close_db()
+    return redirect(url_for('login'))
+
+
+@app.route('/ajax_test_submit')
+@login_required
+def ajax_test_submit():
+
+    db = get_db()
+    user_active_items_id = request.args.get('id')
+    value = request.args.get('value')
+
+    if not value or not user_active_items_id or not type(int(value)) is int or not int(user_active_items_id):
+        app.logger.error('error with values')
+        users_groups = list(db.execute("SELECT * FROM groups WHERE user_id = ?", (session['user_id'],)))
+        users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
+        user_active_items = list(db.execute("SELECT * FROM user_active_items JOIN item ON user_active_items.item_id = item.item_id WHERE user_active_items.user_id = ? ORDER BY item.item_name", (session['user_id'],)))
+        close_db()
+        return jsonify(render_template('ajax_index.html', users_groups=users_groups, users_items=users_items, user_active_items=user_active_items))
+
+    value = int(value)
+    user_active_items_id = int(user_active_items_id)
+    valid_user_active_items = db.execute("SELECT * FROM user_active_items WHERE user_id = ? AND user_active_items_id = ?", (session['user_id'], user_active_items_id)).fetchone()
+    if not valid_user_active_items:
+        
+        users_groups = list(db.execute("SELECT * FROM groups WHERE user_id = ?", (session['user_id'],)))
+        users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
+        user_active_items = list(db.execute("SELECT * FROM user_active_items JOIN item ON user_active_items.item_id = item.item_id WHERE user_active_items.user_id = ? ORDER BY item.item_name", (session['user_id'],)))
+        close_db()
+        return jsonify(render_template('ajax_index.html', users_groups=users_groups, users_items=users_items, user_active_items=user_active_items))
+
+    if value > 0:
+        # update quantity
+        db.execute("UPDATE user_active_items SET active_items_quantity = ? WHERE user_active_items_id = ?", (value, user_active_items_id))
+        db.commit()
+        users_groups = list(db.execute("SELECT * FROM groups WHERE user_id = ?", (session['user_id'],)))
+        users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
+        user_active_items = list(db.execute("SELECT * FROM user_active_items JOIN item ON user_active_items.item_id = item.item_id WHERE user_active_items.user_id = ? ORDER BY item.item_name", (session['user_id'],)))
+        close_db()
+        return jsonify(render_template('ajax_index.html', users_groups=users_groups, users_items=users_items, user_active_items=user_active_items))
+
+        
+    else:
+        # delete item
+        db.execute("DELETE FROM user_active_items WHERE user_active_items_id = ?", (user_active_items_id,))
+        db.commit()
+        users_groups = list(db.execute("SELECT * FROM groups WHERE user_id = ?", (session['user_id'],)))
+        users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
+        user_active_items = list(db.execute("SELECT * FROM user_active_items JOIN item ON user_active_items.item_id = item.item_id WHERE user_active_items.user_id = ? ORDER BY item.item_name", (session['user_id'],)))
+        close_db()
+        return jsonify(render_template('ajax_index.html', users_groups=users_groups, users_items=users_items, user_active_items=user_active_items))
 
 
 
