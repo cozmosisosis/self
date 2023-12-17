@@ -852,53 +852,50 @@ def ajax_test():
     return redirect(url_for('login'))
 
 
-@app.route('/ajax_test_submit')
+@app.route('/ajax_test_submit', methods=['GET', 'POST'])
 @login_required
 def ajax_test_submit():
 
     db = get_db()
-    user_active_items_id = request.args.get('id')
-    value = request.args.get('value')
-
-    if not value or not user_active_items_id or not type(int(value)) is int or not int(user_active_items_id):
-        app.logger.error('error with values')
+    if request.method == 'GET':
+        app.logger.error('Method is get')
         users_groups = list(db.execute("SELECT * FROM groups WHERE user_id = ?", (session['user_id'],)))
         users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
         user_active_items = list(db.execute("SELECT * FROM user_active_items JOIN item ON user_active_items.item_id = item.item_id WHERE user_active_items.user_id = ? ORDER BY item.item_name", (session['user_id'],)))
         close_db()
         return jsonify(render_template('ajax_index.html', users_groups=users_groups, users_items=users_items, user_active_items=user_active_items))
+
+
+    app.logger.error('Method is post')
+    user_active_items_id = request.form.get('id')
+    value = request.form.get('value')
+    if not value or not user_active_items_id or type(int(value)) is not int or not int(user_active_items_id):
+        app.logger.error('error with values')
+        return redirect(url_for('ajax_test_submit'))
+
 
     value = int(value)
     user_active_items_id = int(user_active_items_id)
     valid_user_active_items = db.execute("SELECT * FROM user_active_items WHERE user_id = ? AND user_active_items_id = ?", (session['user_id'], user_active_items_id)).fetchone()
+
     if not valid_user_active_items:
+        app.logger.error('invalid active item')
+        return redirect(url_for('ajax_test_submit'))
         
-        users_groups = list(db.execute("SELECT * FROM groups WHERE user_id = ?", (session['user_id'],)))
-        users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
-        user_active_items = list(db.execute("SELECT * FROM user_active_items JOIN item ON user_active_items.item_id = item.item_id WHERE user_active_items.user_id = ? ORDER BY item.item_name", (session['user_id'],)))
-        close_db()
-        return jsonify(render_template('ajax_index.html', users_groups=users_groups, users_items=users_items, user_active_items=user_active_items))
 
     if value > 0:
-        # update quantity
         db.execute("UPDATE user_active_items SET active_items_quantity = ? WHERE user_active_items_id = ?", (value, user_active_items_id))
         db.commit()
-        users_groups = list(db.execute("SELECT * FROM groups WHERE user_id = ?", (session['user_id'],)))
-        users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
-        user_active_items = list(db.execute("SELECT * FROM user_active_items JOIN item ON user_active_items.item_id = item.item_id WHERE user_active_items.user_id = ? ORDER BY item.item_name", (session['user_id'],)))
-        close_db()
-        return jsonify(render_template('ajax_index.html', users_groups=users_groups, users_items=users_items, user_active_items=user_active_items))
+        return redirect(url_for('ajax_test_submit'))
+    
 
         
     else:
-        # delete item
         db.execute("DELETE FROM user_active_items WHERE user_active_items_id = ?", (user_active_items_id,))
         db.commit()
-        users_groups = list(db.execute("SELECT * FROM groups WHERE user_id = ?", (session['user_id'],)))
-        users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
-        user_active_items = list(db.execute("SELECT * FROM user_active_items JOIN item ON user_active_items.item_id = item.item_id WHERE user_active_items.user_id = ? ORDER BY item.item_name", (session['user_id'],)))
-        close_db()
-        return jsonify(render_template('ajax_index.html', users_groups=users_groups, users_items=users_items, user_active_items=user_active_items))
+        return redirect(url_for('ajax_test_submit'))
+
+
 
 
 

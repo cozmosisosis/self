@@ -5,6 +5,7 @@ $(document).ready(function() {
     $.ajax({
         url: $SCRIPT_ROOT + '/ajax_test_submit',
         dataType: 'json',
+        type: 'GET',
         success: function (response) {
             $('#index_table').replaceWith(response);
         },
@@ -29,6 +30,7 @@ function change_quantity(id) {
     $.ajax({
         url: $SCRIPT_ROOT + '/ajax_test_submit',
         dataType: 'json',
+        type: 'POST',
         data: {
             id: id,
             value: value
