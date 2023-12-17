@@ -3,12 +3,12 @@
 
 
 {% block title %}
-MyList Home Page
+MyList ajax homepage
 {% endblock %}
 
 
 {% block main %}
-Home Page
+Ajax Home Page
 
 
 <div>
@@ -59,62 +59,17 @@ Home Page
     </div>
     
     <br>
-    <div>
-        <table>
-            <tr>
-                <th>Item Name</th>
-                <th>Origin</th>
-                <th>Quantity</th>
-            </tr>
-            {% for rows in user_active_items %}
-            <tr>
-                <td>
-                    {{ rows['item_name'] }}
-                </td>
-                <td>
-                    {% if rows['groups_id'] is not none %}
+    
 
-                    {% for group in users_groups %}
+    <div id="index_table">
 
-                    {% if group['groups_id'] == rows['groups_id'] %}
-
-                    {{ group['groups_name'] }}
-
-                    {% endif %}
-
-                    {% endfor %}
-
-                    {% endif %}
-
-                </td>
-                <td>
-                    {{ rows['active_items_quantity'] }}
-                </td>
-                <td>
-                    <form action="/change_quantity_on_active_list" method="post">
-                        <input type="hidden" name="item_id" id="item_id" value="{{ rows['item_id'] }}">
-                        <input type="number" name="new_quantity" id="new_quantity" style="width: 40px;"
-                            value="{{ rows['active_items_quantity'] }}">
-                        <input type="submit" value="Change Quantity">
-                    </form>
-                </td>
-                <td>
-                    <form action="/remove_from_active_list" method="post">
-                        <input type="hidden" name="user_active_items_id" id="user_active_items_id"
-                            value="{{ rows['user_active_items_id'] }}">
-                        <input type="submit" value="Remove From List">
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
     </div>
 
 
 
 
 </div>
-<script src="{{ url_for('static', filename='script_mylist_index.js') }}"></script>
+<script src="{{ url_for('static', filename='script_mylist_ajax_test.js') }}"></script>
 </div>
 
 {% endblock %}

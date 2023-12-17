@@ -11,10 +11,11 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 
 
+# OLD INDEX NOT IN USE
 
-@app.route('/')
+@app.route('/old_index')
 @login_required
-def index():
+def old_index():
 
     db = get_db()
 
@@ -34,15 +35,17 @@ def index():
         db.execute('UPDATE users SET date_last_active = ? WHERE user_id = ?', (datetime.utcnow(), session['user_id']))
         db.commit()
         close_db()
-        return render_template("index.html", users_items=users_items, user_active_items=user_active_items, users_groups=users_groups)
+        return render_template("old_index.html", users_items=users_items, user_active_items=user_active_items, users_groups=users_groups)
 
     error = 'login failure, user_id not found in session'
     flash(error)
     close_db()
     return redirect(url_for('login'))
-    
 
-    
+# OLD INDEX NOT IN USE END
+
+
+
 @app.route('/add_to_active_list_individual', methods=['POST', 'GET'])
 @login_required
 def add_to_active_list_individual():
@@ -197,9 +200,11 @@ def remove_from_active_list():
 
 
 
-@app.route('/change_quantity_on_active_list', methods=['GET', 'POST'])
+# OLD CHANGE QUANTITY ON ACTIVE LIST NOT IN USE 
+
+@app.route('/old_change_quantity_on_active_list', methods=['GET', 'POST'])
 @login_required
-def change_quantity_on_active_list():
+def old_change_quantity_on_active_list():
 
     db = get_db()
     if request.method == 'GET':
@@ -231,6 +236,7 @@ def change_quantity_on_active_list():
     flash('quantity updated')
     return redirect(url_for('index'))
 
+# OLD CHANGE QUANTITY ON ACTIVE LIST NOT IN USE END
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -809,9 +815,12 @@ def change_quantity_in_group():
 
 
 
-@app.route('/ajax_test')
+
+
+
+@app.route('/')
 @login_required
-def ajax_test():
+def index():
 
     db = get_db()
 
@@ -831,12 +840,13 @@ def ajax_test():
         db.execute('UPDATE users SET date_last_active = ? WHERE user_id = ?', (datetime.utcnow(), session['user_id']))
         db.commit()
         close_db()
-        return render_template("/ajax_templates/ajax_test.html", users_items=users_items, user_active_items=user_active_items, users_groups=users_groups)
+        return render_template("/index.html", users_items=users_items, user_active_items=user_active_items, users_groups=users_groups)
 
     error = 'login failure, user_id not found in session'
     flash(error)
     close_db()
     return redirect(url_for('login'))
+
 
 
 @app.route('/ajax_test_submit', methods=['GET', 'POST'])
@@ -845,21 +855,17 @@ def ajax_test_submit():
 
     db = get_db()
     if request.method == 'GET':
-        app.logger.error('Method is get')
         users_groups = list(db.execute("SELECT * FROM groups WHERE user_id = ?", (session['user_id'],)))
         users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
         user_active_items = list(db.execute("SELECT * FROM user_active_items JOIN item ON user_active_items.item_id = item.item_id WHERE user_active_items.user_id = ? ORDER BY item.item_name", (session['user_id'],)))
         close_db()
         return jsonify(render_template('/ajax_templates/ajax_index.html', users_groups=users_groups, users_items=users_items, user_active_items=user_active_items))
 
-
-    app.logger.error('Method is post')
     user_active_items_id = request.form.get('id')
     value = request.form.get('value')
     if not value or not user_active_items_id or type(int(value)) is not int or not int(user_active_items_id):
         app.logger.error('error with values')
         return redirect(url_for('ajax_test_submit'))
-
 
     value = int(value)
     user_active_items_id = int(user_active_items_id)
@@ -867,21 +873,17 @@ def ajax_test_submit():
 
     if not valid_user_active_items:
         app.logger.error('invalid active item')
-        return redirect(url_for('ajax_test_submit'))
-        
+        return redirect(url_for('ajax_test_submit'))   
 
     if value > 0:
         db.execute("UPDATE user_active_items SET active_items_quantity = ? WHERE user_active_items_id = ?", (value, user_active_items_id))
         db.commit()
         return redirect(url_for('ajax_test_submit'))
-    
-
-        
+ 
     else:
         db.execute("DELETE FROM user_active_items WHERE user_active_items_id = ?", (user_active_items_id,))
         db.commit()
         return redirect(url_for('ajax_test_submit'))
-
 
 
 

@@ -1,0 +1,120 @@
+{% extends "loggedin_template.html" %}
+
+
+
+{% block title %}
+MyList Home Page
+{% endblock %}
+
+
+{% block main %}
+Home Page
+
+
+<div>
+    <table>
+        <tr>
+            <th>
+                <p>Needs</p>
+            </th>
+            <th>
+                <p>Stuff</p>
+            </th>
+            <th></th>
+            <th></th>
+
+        </tr>
+    </table>
+
+    
+    <div>
+        <form action="/add_to_active_list_individual" method="post">
+
+            <label for="item_to_add">Add an item to your list:</label>
+            <input list="item" id="item_to_add" name="item_to_add" autocomplete="off" />
+            <datalist id="item" name="item">
+                {% for row in users_items %}
+                <option value="{{ row['item_name'] }}"></option>
+                {% endfor %}
+            </datalist>
+            <label for="quantity">Quantity</label>
+            <input type="number" value="1" name="quantity" id="quantity" style="width: 40px;">
+            <input type="submit">
+        </form>
+    </div>
+
+    <div>
+        <form action="/add_from_group_verification" method="post">
+
+            <label for="group_id">Add all items from group:</label>
+            <select name="group_id" id="group_id">
+                <option value="None" selected disabled>Group</option>
+                {% for groups in users_groups %}
+                <option value="{{ groups['groups_id'] }}">{{ groups['groups_name'] }}</option>
+                {% endfor %}
+                
+            </select>
+            <input type="submit" value="Add all Ingredients From Group">
+        </form>
+    </div>
+    
+    <br>
+    <div>
+        <table>
+            <tr>
+                <th>Item Name</th>
+                <th>Origin</th>
+                <th>Quantity</th>
+            </tr>
+            {% for rows in user_active_items %}
+            <tr>
+                <td>
+                    {{ rows['item_name'] }}
+                </td>
+                <td>
+                    {% if rows['groups_id'] is not none %}
+
+                    {% for group in users_groups %}
+
+                    {% if group['groups_id'] == rows['groups_id'] %}
+
+                    {{ group['groups_name'] }}
+
+                    {% endif %}
+
+                    {% endfor %}
+
+                    {% endif %}
+
+                </td>
+                <td>
+                    {{ rows['active_items_quantity'] }}
+                </td>
+                <td>
+                    <form action="/old_change_quantity_on_active_list" method="post">
+                        <input type="hidden" name="item_id" id="item_id" value="{{ rows['item_id'] }}">
+                        <input type="number" name="new_quantity" id="new_quantity" style="width: 40px;"
+                            value="{{ rows['active_items_quantity'] }}">
+                        <input type="submit" value="Change Quantity">
+                    </form>
+                </td>
+                <td>
+                    <form action="/remove_from_active_list" method="post">
+                        <input type="hidden" name="user_active_items_id" id="user_active_items_id"
+                            value="{{ rows['user_active_items_id'] }}">
+                        <input type="submit" value="Remove From List">
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+
+
+
+</div>
+<script src="{{ url_for('static', filename='script_mylist_index.js') }}"></script>
+</div>
+
+{% endblock %}
