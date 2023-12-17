@@ -815,9 +815,6 @@ def change_quantity_in_group():
 
 
 
-
-
-
 @app.route('/')
 @login_required
 def index():
@@ -849,9 +846,9 @@ def index():
 
 
 
-@app.route('/ajax_test_submit', methods=['GET', 'POST'])
+@app.route('/active_list', methods=['GET', 'POST'])
 @login_required
-def ajax_test_submit():
+def active_list():
 
     db = get_db()
     if request.method == 'GET':
@@ -865,7 +862,7 @@ def ajax_test_submit():
     value = request.form.get('value')
     if not value or not user_active_items_id or type(int(value)) is not int or not int(user_active_items_id):
         app.logger.error('error with values')
-        return redirect(url_for('ajax_test_submit'))
+        return redirect(url_for('active_list'))
 
     value = int(value)
     user_active_items_id = int(user_active_items_id)
@@ -873,17 +870,17 @@ def ajax_test_submit():
 
     if not valid_user_active_items:
         app.logger.error('invalid active item')
-        return redirect(url_for('ajax_test_submit'))   
+        return redirect(url_for('active_list'))
 
     if value > 0:
         db.execute("UPDATE user_active_items SET active_items_quantity = ? WHERE user_active_items_id = ?", (value, user_active_items_id))
         db.commit()
-        return redirect(url_for('ajax_test_submit'))
+        return redirect(url_for('active_list'))
  
     else:
         db.execute("DELETE FROM user_active_items WHERE user_active_items_id = ?", (user_active_items_id,))
         db.commit()
-        return redirect(url_for('ajax_test_submit'))
+        return redirect(url_for('active_list'))
 
 
 
