@@ -787,7 +787,7 @@ def change_quantity_in_group():
         group_items = list(db.execute("SELECT groups_items.groups_id, item.item_id, item.item_name, groups_items.quantity, item.user_id, groups_items.groups_items_id FROM item JOIN groups_items ON groups_items.item_id = item.item_id WHERE item.user_id = ? ORDER BY item_name", (session['user_id'],)))
         users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
         close_db()
-        return jsonify(render_template('ajax_edit_groups.html', groups=groups, group_items=group_items, users_items=users_items))
+        return jsonify(render_template('/ajax_templates/ajax_edit_groups.html', groups=groups, group_items=group_items, users_items=users_items))
 
     groups_items_id = request.form.get('id')
     value = request.form.get('value')
@@ -796,7 +796,7 @@ def change_quantity_in_group():
     if not valid_groups_item:
         return redirect(url_for('change_quantity_in_group'))
 
-     value = int(value)
+    value = int(value)
     if value > 0:
         db.execute("UPDATE groups_items SET quantity = ? WHERE groups_items_id = ?", (value, groups_items_id,))
         db.commit()
@@ -831,7 +831,7 @@ def ajax_test():
         db.execute('UPDATE users SET date_last_active = ? WHERE user_id = ?', (datetime.utcnow(), session['user_id']))
         db.commit()
         close_db()
-        return render_template("ajax_test.html", users_items=users_items, user_active_items=user_active_items, users_groups=users_groups)
+        return render_template("/ajax_templates/ajax_test.html", users_items=users_items, user_active_items=user_active_items, users_groups=users_groups)
 
     error = 'login failure, user_id not found in session'
     flash(error)
@@ -850,7 +850,7 @@ def ajax_test_submit():
         users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
         user_active_items = list(db.execute("SELECT * FROM user_active_items JOIN item ON user_active_items.item_id = item.item_id WHERE user_active_items.user_id = ? ORDER BY item.item_name", (session['user_id'],)))
         close_db()
-        return jsonify(render_template('ajax_index.html', users_groups=users_groups, users_items=users_items, user_active_items=user_active_items))
+        return jsonify(render_template('/ajax_templates/ajax_index.html', users_groups=users_groups, users_items=users_items, user_active_items=user_active_items))
 
 
     app.logger.error('Method is post')
