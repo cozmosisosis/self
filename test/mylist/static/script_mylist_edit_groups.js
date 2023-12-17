@@ -5,6 +5,7 @@ $(document).ready(function() {
     $.ajax({
         url: $SCRIPT_ROOT + '/change_quantity_in_group',
         dataType: 'json',
+        type: 'GET',
         success: function (response) {
             $('#groups_table').replaceWith(response);
         },
@@ -26,6 +27,7 @@ function update_quantity(id) {
     $.ajax({
         url: $SCRIPT_ROOT + '/change_quantity_in_group',
         dataType: 'json',
+        type: 'POST',
         data: {
             id: id,
             value: value

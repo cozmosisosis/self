@@ -777,48 +777,35 @@ def edit_account_route(info_to_edit):
 
 
 
-
-
 @app.route('/change_quantity_in_group', methods=['POST', 'GET'])
 @login_required
 def change_quantity_in_group():
 
     db = get_db()
+    if request.method == 'GET':
+        groups = list(db.execute("SELECT * FROM groups WHERE user_id = ? ORDER BY groups_name", (session['user_id'],)))
+        group_items = list(db.execute("SELECT groups_items.groups_id, item.item_id, item.item_name, groups_items.quantity, item.user_id, groups_items.groups_items_id FROM item JOIN groups_items ON groups_items.item_id = item.item_id WHERE item.user_id = ? ORDER BY item_name", (session['user_id'],)))
+        users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
+        close_db()
+        return jsonify(render_template('ajax_edit_groups.html', groups=groups, group_items=group_items, users_items=users_items))
 
-
-    groups_items_id = request.args.get('id')
-    value = request.args.get('value')
+    groups_items_id = request.form.get('id')
+    value = request.form.get('value')
 
     valid_groups_item = db.execute("SELECT * FROM groups_items JOIN groups ON groups_items.groups_id = groups.groups_id WHERE groups.user_id = ? AND groups_items.groups_items_id = ?", (session['user_id'], groups_items_id)).fetchone()
     if not valid_groups_item:
-        groups = list(db.execute("SELECT * FROM groups WHERE user_id = ? ORDER BY groups_name", (session['user_id'],)))
-        group_items = list(db.execute("SELECT groups_items.groups_id, item.item_id, item.item_name, groups_items.quantity, item.user_id, groups_items.groups_items_id FROM item JOIN groups_items ON groups_items.item_id = item.item_id WHERE item.user_id = ? ORDER BY item_name", (session['user_id'],)))
-        users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
-        close_db()
-        return jsonify(render_template('ajax_edit_groups.html', groups=groups, group_items=group_items, users_items=users_items))
+        return redirect(url_for('change_quantity_in_group'))
 
-    value = int(value)
+     value = int(value)
     if value > 0:
         db.execute("UPDATE groups_items SET quantity = ? WHERE groups_items_id = ?", (value, groups_items_id,))
         db.commit()
-        groups = list(db.execute("SELECT * FROM groups WHERE user_id = ? ORDER BY groups_name", (session['user_id'],)))
-        group_items = list(db.execute("SELECT groups_items.groups_id, item.item_id, item.item_name, groups_items.quantity, item.user_id, groups_items.groups_items_id FROM item JOIN groups_items ON groups_items.item_id = item.item_id WHERE item.user_id = ? ORDER BY item_name", (session['user_id'],)))
-        users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
-        close_db()
-        return jsonify(render_template('ajax_edit_groups.html', groups=groups, group_items=group_items, users_items=users_items))
+        return redirect(url_for('change_quantity_in_group'))
 
     else:
         db.execute("DELETE FROM groups_items WHERE groups_items_id = ?", (groups_items_id,))
         db.commit()
-        groups = list(db.execute("SELECT * FROM groups WHERE user_id = ? ORDER BY groups_name", (session['user_id'],)))
-        group_items = list(db.execute("SELECT groups_items.groups_id, item.item_id, item.item_name, groups_items.quantity, item.user_id, groups_items.groups_items_id FROM item JOIN groups_items ON groups_items.item_id = item.item_id WHERE item.user_id = ? ORDER BY item_name", (session['user_id'],)))
-        users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
-        close_db()
-        return jsonify(render_template('ajax_edit_groups.html', groups=groups, group_items=group_items, users_items=users_items))
-
-
-
-
+        return redirect(url_for('change_quantity_in_group'))
 
 
 
