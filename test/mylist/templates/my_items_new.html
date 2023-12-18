@@ -1,0 +1,50 @@
+{% extends "loggedin_template.html" %}
+
+
+{% block title %}
+My items page!
+{% endblock %}
+
+
+
+{% block main %}
+<script src="{{ url_for('static', filename='script_mylist_ajax_test.js') }}"></script>
+
+<div>
+    My Items
+
+
+    <div>
+        <form action="/my_items_new_ajax" method="post">
+            <input type="hidden" name="action" value="new_item">
+            <table>
+                <tr>
+                    <th>
+                        <p>Add item</p>
+                    </th>
+                </tr>
+                <tr>
+                    <td><input type="text" placeholder="Name" autocomplete="off" name="item_name" autofocus></td>
+                    <td>
+                        <input type="submit" value="Add">
+                    </td>
+                </tr>
+                <tr><td>
+                    <div id="ajax_message_add_item"></div>
+                </td></tr>
+            </table>
+        </form>
+    </div>
+
+    <br>
+
+    <div id="my_items_table">
+
+
+    </div>
+
+
+
+</div>
+
+{% endblock %}

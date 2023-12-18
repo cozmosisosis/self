@@ -168,6 +168,7 @@ def add_from_group_verification():
     return render_template('add_from_group_verification.html', groups_items=groups_items)
 
 
+# OLD ROUTE NO LONGER IN USE
 
 @app.route('/remove_from_active_list', methods=['GET', 'POST'])
 @login_required
@@ -197,6 +198,8 @@ def remove_from_active_list():
     close_db()
 
     return redirect(url_for('index'))
+
+# OLD ROUTE NO LONGER IN USE END
 
 
 
@@ -884,6 +887,48 @@ def active_list():
 
 
 
+
+@app.route("/my_items_new", methods=['GET', 'POST'])
+@login_required
+def my_items_new():
+
+    db = get_db()
+    if request.method == 'GET':
+        # render db info
+        item = db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],))
+        item = list(item)
+        close_db()
+        return render_template('my_items_new.html', item=item)
+        
+    if not request.form['item_name']:
+        flash('Name must be filled out to submit')
+        close_db()
+        return redirect(url_for('my_items'))
+
+    new_item_name = request.form['item_name'].strip()
+    item_exists = db.execute("SELECT * FROM item WHERE item_name = ? AND user_id = ?", (new_item_name, session['user_id'],)).fetchone()
+    if item_exists:
+        flash('Item already exists')
+        close_db()
+        return redirect(url_for('my_items'))
+    db.execute("INSERT INTO item (user_id, item_name) VALUES (?, ?)", (session['user_id'], new_item_name, ))
+    db.commit()
+    close_db()
+    return redirect(url_for('my_items'))
+
+
+@app.route("/my_items_new_ajax", methods=['GET', 'POST'])
+@login_required
+def my_items_new_ajax():
+
+    db = get_db()
+    if request.method == 'GET':
+        item = db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],))
+        item = list(item)
+        close_db()
+        return jsonify(render_template('/ajax_templates/ajax_my_items.html', item=item))
+
+    # check and delete item
 
 
 
