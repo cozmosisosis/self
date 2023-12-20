@@ -803,7 +803,7 @@ def active_list():
 @login_required
 def my_items():
 
-    return render_template('my_items_new.html')
+    return render_template('my_items.html')
 
 
 
@@ -917,24 +917,56 @@ def delete_item():
 
 
 
-
-
-@app.route("/my_items_new_ajax", methods=['GET', 'POST'])
+@app.get("/my_groups_new")
 @login_required
-def my_items_new_ajax():
+def my_groups_new():
+    
+    return render_template("/my_groups_new.html")
 
+
+
+@app.get("/my_groups_data")
+@login_required
+def my_groups_data():
     db = get_db()
-    if request.method == 'GET':
-        item = db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],))
-        item = list(item)
-        close_db()
-        return jsonify(render_template('/ajax_templates/ajax_my_items.html', item=item))
+    groups = list(db.execute("SELECT * FROM groups WHERE user_id = ? ORDER BY groups_name", (session['user_id'],)))
+    group_items = list(db.execute("SELECT groups_items.groups_id, item.item_id, item.item_name, groups_items.quantity, item.user_id FROM item JOIN groups_items ON groups_items.item_id = item.item_id WHERE item.user_id = ? ORDER BY item_name", (session['user_id'],)))
+    users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
+    close_db()
+    return jsonify(render_template("/ajax_templates/ajax_my_groups.html", groups=groups, group_items=group_items, users_items=users_items))
 
-    # check and delete item
+
+
+@app.post("/create_group")
+@login_required
+def create_group():
+
+    error = None
+    db = get_db()
+    new_group_name = request.form.get('new_group_name')
+
+    if not new_group_name:
+        error = 'Must fill out name to create new group'
+        groups = list(db.execute("SELECT * FROM groups WHERE user_id = ? ORDER BY groups_name", (session['user_id'],)))
+        group_items = list(db.execute("SELECT groups_items.groups_id, item.item_id, item.item_name, groups_items.quantity, item.user_id FROM item JOIN groups_items ON groups_items.item_id = item.item_id WHERE item.user_id = ? ORDER BY item_name", (session['user_id'],)))
+        users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
+        close_db()
+        return jsonify(render_template("/ajax_templates/ajax_my_groups.html", groups=groups, group_items=group_items, users_items=users_items, error=error))
+        
+    app.logger.error('create group route')
+    return redirect(url_for('my_groups_data')) 
+
 
 
 
 @app.errorhandler(404)
 def page_not_found(error):
     flash('Invalid route')
+    return redirect(url_for('index'))
+
+
+
+@app.errorhandler(405)
+def page_not_found(error):
+    flash('Method not allowed for route')
     return redirect(url_for('index'))

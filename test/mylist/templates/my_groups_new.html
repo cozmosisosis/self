@@ -1,0 +1,27 @@
+{% extends "loggedin_template.html" %}
+
+
+
+
+
+{% block title %}
+My Groups Page
+{% endblock %}
+
+
+
+
+
+{% block main %}
+
+<script src="{{ url_for('static', filename='script_mylist_my_groups.js') }}"></script>
+<div>
+    My Groups Page!
+
+    <div id="my_groups_data"></div>
+
+</div>
+
+
+
+{% endblock %}
