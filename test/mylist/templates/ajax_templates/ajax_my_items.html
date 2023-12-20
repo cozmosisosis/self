@@ -1,8 +1,35 @@
 <div id="my_items_table">
 
     <div>
+        <form id="create_item">
+            <input type="hidden" name="action" value="new_item">
+            <table>
+                <tr>
+                    <th>
+                        <p>Add item</p>
+                    </th>
+                </tr>
+                <tr>
+                    <td><input type="text" placeholder="Name" autocomplete="off" name="item_name" autofocus></td>
+                    <td>
+                        <input type="submit" value="Add">
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
 
-        <form action="/my_items_new_ajax" method="post">
+    <div id="ajax_error_message">
+        {% if error is defined %}
+        {{ error }}
+        {% endif %}
+    </div>
+    
+    <br>
+
+    <div>
+
+        <form id="change_item_name">
             
             <input type="hidden" name="action" value="change_item_name">
             <table>
@@ -63,7 +90,7 @@
                 <td>{{ row['item_id'] }}</td>
                 <td>{{ row['user_id'] }}</td>
                 <td>
-                    <form action="/my_items_new_ajax" method="post">
+                    <form id="delete_item">
                         <input type="hidden" name="action" value="remove_item">
                         <input type="hidden" name="item_id" value="{{ row['item_id'] }}">
                         <input type="submit" value="Remove">
