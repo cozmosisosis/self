@@ -1,4 +1,4 @@
-console.log("ajax testing js file jjjj")
+console.log("ajax testing js file")
 
 
 $(document).ready(function () {
@@ -21,7 +21,6 @@ $(document).on("submit", "form", function(e) {
     
     var form = $(this);
     var formId = form.attr("id");
-    console.log(formId)
     e.preventDefault();
 
     $.ajax({
@@ -30,11 +29,9 @@ $(document).on("submit", "form", function(e) {
         type: 'POST',
         data: form.serialize(),
         success: function(response) {
-            console.log('happened');
             $('#my_items_table').replaceWith(response);
         },
         error: function(response) {
-            console.log('didnt')
             location.reload();
         }
     })

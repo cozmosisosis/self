@@ -387,42 +387,6 @@ def account():
         close_db()
         return render_template("account.html", user=user)
 
-    
-# NEED TO DELETE ROUTE WITH ALL ASSOCIATED DATA
-
-@app.route("/my_items", methods=['GET', 'POST'])
-@login_required
-def my_items():
-
-    db = get_db()
-    if request.method == 'GET':
-        # render db info
-        item = db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],))
-        item = list(item)
-        close_db()
-        return render_template('my_items.html', item=item)
-        
-    if not request.form['item_name']:
-        flash('Name must be filled out to submit')
-        close_db()
-        return redirect(url_for('my_items'))
-
-    new_item_name = request.form['item_name'].strip()
-    item_exists = db.execute("SELECT * FROM item WHERE item_name = ? AND user_id = ?", (new_item_name, session['user_id'],)).fetchone()
-    if item_exists:
-        flash('Item already exists')
-        close_db()
-        return redirect(url_for('my_items'))
-    db.execute("INSERT INTO item (user_id, item_name) VALUES (?, ?)", (session['user_id'], new_item_name, ))
-    db.commit()
-    close_db()
-    return redirect(url_for('my_items'))
-
-# NEED TO DELETE ROUTE WITH ALL ASSOCIATED DATA END
-    
-    
-
-
 
 
 
@@ -833,13 +797,11 @@ def active_list():
 
 
 
-
-
-
-
-@app.get("/my_items_new")
+# BEST TECHNIQUE SO FAR
+    
+@app.get("/my_items")
 @login_required
-def my_items_new():
+def my_items():
 
     return render_template('my_items_new.html')
 
@@ -857,30 +819,26 @@ def my_items_data():
 
 
 
-
 @app.post("/create_item")
 @login_required
 def create_item():
+
+    error = None
     db = get_db()
     new_item_name = request.form.get('item_name').strip()
     if not new_item_name:
-        app.logger.error('here')
         error = 'Cannot create an item with no name, please try again.'
-
+    
+    if not error:
+        item_exists = db.execute("SELECT * FROM item WHERE item_name = ? COLLATE NOCASE AND user_id = ?", (new_item_name, session['user_id'],)).fetchone()
+        if item_exists:
+            error = 'Item already exists'
+    
+    if error:
         item = db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],))
         item = list(item)
         close_db()
         return jsonify(render_template('/ajax_templates/ajax_my_items.html', item=item, error=error))
-    
-
-    item_exists = db.execute("SELECT * FROM item WHERE item_name = ? AND user_id = ?", (new_item_name, session['user_id'],)).fetchone()
-    if item_exists:
-        error = 'Item already exists'
-        item = db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],))
-        item = list(item)
-        close_db()
-        return jsonify(render_template('/ajax_templates/ajax_my_items.html', item=item, error=error))
-    
 
     db.execute("INSERT INTO item (user_id, item_name) VALUES (?, ?)", (session['user_id'], new_item_name, ))
     db.commit()
@@ -889,72 +847,72 @@ def create_item():
 
 
 
-@app.route("/change_item_name", methods=['GET', 'POST'])
+@app.post("/change_item_name")
 @login_required
 def change_item_name():
 
+    error = None
     db = get_db()
-    if request.method == 'GET':
-        close_db()
-        return redirect(url_for('my_items'))
-    
     item_id = request.form.get('item_id')
-    item_new_name = request.form.get('item_new_name')
+    item_new_name = request.form.get('item_new_name').strip()
 
     if not item_id or not item_new_name:
-        flash('Item must be chosen and a new name must be submitted to change an items name')
-        close_db()
-        return redirect(url_for('my_items'))
+        error = 'Please select item and choose a new name before submitting. New name must not be empty.'
 
-    valid_item = db.execute("SELECT * FROM item WHERE item_id = ? AND user_id = ?", (item_id, session['user_id'],)).fetchone()
-    if not valid_item:
-        flash('Error Invalid submission')
-        close_db()
-        return redirect(url_for('my_items'))
+    if not error:
+        valid_item = db.execute("SELECT * FROM item WHERE user_id = ? AND item_id = ?", (session['user_id'], item_id,)).fetchone()
+        if not valid_item:
+            error = 'Error with item selected, please try again.'
 
-    if valid_item['item_name'] == item_new_name:
-        flash('New item name is the same as old')
-        close_db()
-        return redirect(url_for('my_items'))
+    if not error:
+        if valid_item['item_name'] == item_new_name:
+            error = 'New item name is the same as old'
 
-    db.execute("UPDATE item SET item_name = ? WHERE item_id = ? AND user_id = ?", (item_new_name, item_id, session['user_id'],))
+        elif not valid_item['item_name'].casefold() == item_new_name.casefold():
+            item_exists_with_name = db.execute("SELECT * FROM item WHERE user_id = ? AND item_name = ? COLLATE NOCASE", (session['user_id'], item_new_name)).fetchone()
+            if item_exists_with_name:
+                error = 'Item with given name exists'
+
+    if error:
+        item = db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],))
+        item = list(item)
+        close_db()
+        return jsonify(render_template('/ajax_templates/ajax_my_items.html', item=item, error=error))
+
+
+    db.execute("UPDATE item SET item_name = ? WHERE user_id = ? AND item_id = ?", (item_new_name, session['user_id'], item_id))
     db.commit()
-
-    close_db()
-    flash('Item name changed')
-    return redirect(url_for('my_items'))
+    return redirect(url_for('my_items_data'))
 
 
 
-
-
-
-
-
-@app.route("/remove_item", methods=['GET', 'POST'])
+@app.post("/delete_item")
 @login_required
-def remove_item():
+def delete_item():
 
+    error = None
     db = get_db()
-    if request.method == 'GET':
+    item_to_delete = request.form.get('item_id')
+    if not item_to_delete:
+        error = 'Error no item found in submition'
+        app.logger.error('No item id')
+
+    if not error:
+        valid_item = db.execute("SELECT * FROM item WHERE user_id = ? AND item_id = ?", (session['user_id'], item_to_delete)).fetchone()
+        if not valid_item:
+            error = 'Error with item submitted'
+
+    if error:
+        item = db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],))
+        item = list(item)
         close_db()
-        return redirect(url_for('my_items'))
+        return jsonify(render_template('/ajax_templates/ajax_my_items.html', item=item, error=error))
     
-    item_deleting = request.form['item_id']
-
-    valid_item = db.execute("SELECT * FROM item WHERE item_id = ? AND user_id = ?", (item_deleting, session['user_id'],)).fetchone()
-    if not valid_item:
-        flash('not valid item')
-        close_db()
-        return redirect(url_for('my_items'))
-
-    db.execute("DELETE FROM item WHERE item_id = ? AND user_id = ?", (item_deleting, session['user_id']))
+    db.execute("DELETE FROM item WHERE user_id = ? AND item_id = ?", (session['user_id'], item_to_delete))
     db.commit()
-
-    close_db()
-    return redirect(url_for('my_items'))
-
-
+    return redirect(url_for('my_items_data'))
+    
+# BEST TECHNIQUE SO FAR END
 
 
 

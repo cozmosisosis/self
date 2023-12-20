@@ -1,5 +1,11 @@
 <div id="my_items_table">
 
+    <div id="ajax_error_message">
+        {% if error is defined %}
+        {{ error }}
+        {% endif %}
+    </div>
+
     <div>
         <form id="create_item">
             <input type="hidden" name="action" value="new_item">
@@ -19,11 +25,6 @@
         </form>
     </div>
 
-    <div id="ajax_error_message">
-        {% if error is defined %}
-        {{ error }}
-        {% endif %}
-    </div>
     
     <br>
 
@@ -91,8 +92,7 @@
                 <td>{{ row['user_id'] }}</td>
                 <td>
                     <form id="delete_item">
-                        <input type="hidden" name="action" value="remove_item">
-                        <input type="hidden" name="item_id" value="{{ row['item_id'] }}">
+                        <input type="hidden" name="item_id" id="item_id" value="{{ row['item_id'] }}">
                         <input type="submit" value="Remove">
                     </form>
                 </td>
