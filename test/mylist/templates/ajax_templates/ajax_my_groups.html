@@ -25,6 +25,8 @@
         </table>
     </form>
 
+    <br>
+
     <form id="add_item_to_group" action="/add_to_group" method="post">
         
         
@@ -116,10 +118,26 @@
                 {% endfor %}
                 </p>
             </td>
+
+
+            <td>
+                <form id="edit_group">
+                    <input type="hidden" name="group_id" id="group_id" value="{{ row['groups_id'] }}">
+                    <input type="submit" value="Edit Group">
+                </form>
+            </td>
+
             <td>
                 <form action="/add_from_group_verification" method="post">
                     <input type="hidden" name="group_id" id="group_id" value="{{ row['groups_id'] }}">
-                    <input type="submit" value="Add all Ingredients">
+                    <input type="submit" value="Add to Grocery List">
+                </form>
+            </td>
+                
+            <td>
+                <form id="delete_group">
+                    <input type="hidden" name="group_to_delete" id="group_to_delete" value="{{ row['groups_id'] }}">
+                    <input type="submit" value="X">
                 </form>
             </td>
 

@@ -1,4 +1,37 @@
-<div id="index_table">
+<div id="index_data">
+
+    <div>
+        <form id="active_list_add_item">
+
+            <label for="item_to_add">Add an item to your list:</label>
+            <input list="item" id="item_to_add" name="item_to_add" autocomplete="off" />
+            <datalist id="item" name="item">
+                {% for row in users_items %}
+                <option value="{{ row['item_name'] }}"></option>
+                {% endfor %}
+            </datalist>
+            <label for="quantity">Quantity</label>
+            <input type="number" value="1" name="quantity" id="quantity" style="width: 40px;">
+            <input type="submit">
+        </form>
+    </div>
+
+    <div>
+        <form id="add_from_group_verification">
+
+            <label for="group_id">Add all items from group:</label>
+            <select name="group_id" id="group_id">
+                <option value="None" selected disabled>Group</option>
+                {% for groups in users_groups %}
+                <option value="{{ groups['groups_id'] }}">{{ groups['groups_name'] }}</option>
+                {% endfor %}
+
+            </select>
+            <input type="submit" value="Add all Ingredients From Group">
+        </form>
+    </div>
+    
+    
     <table>
         <tr>
             <th>Item Name</th>

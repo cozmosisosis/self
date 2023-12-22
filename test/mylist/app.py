@@ -46,47 +46,44 @@ def old_index():
 
 
 
-@app.route('/add_to_active_list_individual', methods=['POST', 'GET'])
+
+
+@app.post("/active_list_add_item")
 @login_required
-def add_to_active_list_individual():
+def active_list_add_item():
 
     db = get_db()
-
-    if request.method == 'GET':
-        close_db()
-        return redirect(url_for('index'))
-
-    item_to_add = request.form['item_to_add'].strip()
-    quantity_to_add = request.form['quantity']
+    item_to_add = request.form.get('item_to_add').strip()
+    quantity_to_add = request.form.get('quantity')
     quantity_to_add_int = int(quantity_to_add)
     if not item_to_add or not quantity_to_add or quantity_to_add_int < 1:
-        flash('Input must not be empty and quantity must be valid')
+        # implement error message
         close_db()
-        return redirect(url_for('index'))
+        return redirect(url_for('active_list_data'))
 
     valid_item = db.execute("SELECT * FROM item WHERE user_id = ? AND item_name = ? COLLATE NOCASE", (session['user_id'], item_to_add,)).fetchone()
     if not valid_item:
-        # case where item did not previously exist
         db.execute("INSERT INTO item (user_id, item_name) VALUES (?, ?)", (session['user_id'], item_to_add,))
         db.commit()
         new_item = db.execute("SELECT * FROM item WHERE user_id = ? AND item_name = ?", (session['user_id'], item_to_add)).fetchone()
         db.execute("INSERT INTO user_active_items (user_id, item_id, active_items_quantity) VALUES (?, ?, ?)", (session['user_id'], new_item['item_id'], quantity_to_add_int,))
         db.commit()
         close_db()
-        return redirect(url_for('index'))
-
+        return redirect(url_for('active_list_data'))
+    
     item_on_list = db.execute("SELECT * FROM user_active_items WHERE user_id = ? AND item_id = ? AND groups_id IS NULL", (session['user_id'], valid_item['item_id'], )).fetchone()
     if item_on_list:
         new_quantity = item_on_list['active_items_quantity'] + quantity_to_add_int
         db.execute("UPDATE user_active_items SET active_items_quantity = ? WHERE user_id = ? AND item_id = ?", (new_quantity, session['user_id'], valid_item['item_id'],))
         db.commit()
         close_db()
-        return redirect(url_for('index'))
-
+        return redirect(url_for('active_list_data'))
+    
     db.execute("INSERT INTO user_active_items (user_id, item_id, active_items_quantity) VALUES (?, ?, ?)", (session['user_id'], valid_item['item_id'], quantity_to_add_int))
     db.commit()
     close_db()
-    return redirect(url_for('index'))
+    return redirect(url_for('active_list_data'))
+
 
 
 
@@ -250,7 +247,6 @@ def login():
     if request.method == 'GET':
 
         if 'user_id' in session:
-            app.logger.error('testing')
                     
             session_user_id_valid = db.execute("SELECT * FROM users WHERE user_id = ?", (session['user_id'],)).fetchone()
             if session_user_id_valid is None:
@@ -728,54 +724,50 @@ def change_quantity_in_group():
 
 
 
-@app.route('/')
+@app.get('/')
 @login_required
 def index():
 
+    error = None
     db = get_db()
+    user = db.execute('SELECT * FROM users WHERE user_id = ?', (session['user_id'],)).fetchone()
 
-    if 'user_id' in session:
-        error = None
-        user = db.execute('SELECT * FROM users WHERE user_id = ?', (session['user_id'],)).fetchone()
-
-        if not user:
-            error = "Failure retreving user account info please try logging on again"
-            flash(error)
-            close_db()
-            return redirect(url_for('login'))
-        users_groups = list(db.execute("SELECT * FROM groups WHERE user_id = ?", (session['user_id'],)))
-        users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
-        user_active_items = list(db.execute("SELECT * FROM user_active_items JOIN item ON user_active_items.item_id = item.item_id WHERE user_active_items.user_id = ? ORDER BY item.item_name", (session['user_id'],)))
-        
-        db.execute('UPDATE users SET date_last_active = ? WHERE user_id = ?', (datetime.utcnow(), session['user_id']))
-        db.commit()
+    if not user:
+        error = "Failure retreving user account info please try logging on again"
+        flash(error)
         close_db()
-        return render_template("/index.html", users_items=users_items, user_active_items=user_active_items, users_groups=users_groups)
-
-    error = 'login failure, user_id not found in session'
-    flash(error)
+        return redirect(url_for('login'))
+    
+    db.execute('UPDATE users SET date_last_active = ? WHERE user_id = ?', (datetime.utcnow(), session['user_id']))
+    db.commit()
     close_db()
-    return redirect(url_for('login'))
+    return render_template("/index.html")
 
 
 
-@app.route('/active_list', methods=['GET', 'POST'])
+@app.get("/active_list_data")
+@login_required
+def active_list_data():
+
+    db = get_db()
+    users_groups = list(db.execute("SELECT * FROM groups WHERE user_id = ?", (session['user_id'],)))
+    users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
+    user_active_items = list(db.execute("SELECT * FROM user_active_items JOIN item ON user_active_items.item_id = item.item_id WHERE user_active_items.user_id = ? ORDER BY item.item_name", (session['user_id'],)))
+    close_db()
+    return jsonify(render_template('/ajax_templates/ajax_index.html', users_groups=users_groups, users_items=users_items, user_active_items=user_active_items))
+     
+
+
+@app.post('/active_list_quantity')
 @login_required
 def active_list():
 
     db = get_db()
-    if request.method == 'GET':
-        users_groups = list(db.execute("SELECT * FROM groups WHERE user_id = ?", (session['user_id'],)))
-        users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
-        user_active_items = list(db.execute("SELECT * FROM user_active_items JOIN item ON user_active_items.item_id = item.item_id WHERE user_active_items.user_id = ? ORDER BY item.item_name", (session['user_id'],)))
-        close_db()
-        return jsonify(render_template('/ajax_templates/ajax_index.html', users_groups=users_groups, users_items=users_items, user_active_items=user_active_items))
-
     user_active_items_id = request.form.get('id')
     value = request.form.get('value')
     if not value or not user_active_items_id or type(int(value)) is not int or not int(user_active_items_id):
         app.logger.error('error with values')
-        return redirect(url_for('active_list'))
+        return redirect(url_for('active_list_data'))
 
     value = int(value)
     user_active_items_id = int(user_active_items_id)
@@ -783,17 +775,17 @@ def active_list():
 
     if not valid_user_active_items:
         app.logger.error('invalid active item')
-        return redirect(url_for('active_list'))
+        return redirect(url_for('active_list_data'))
 
     if value > 0:
         db.execute("UPDATE user_active_items SET active_items_quantity = ? WHERE user_active_items_id = ?", (value, user_active_items_id))
         db.commit()
-        return redirect(url_for('active_list'))
+        return redirect(url_for('active_list_data'))
  
     else:
         db.execute("DELETE FROM user_active_items WHERE user_active_items_id = ?", (user_active_items_id,))
         db.commit()
-        return redirect(url_for('active_list'))
+        return redirect(url_for('active_list_data'))
 
 
 
@@ -943,18 +935,68 @@ def create_group():
 
     error = None
     db = get_db()
-    new_group_name = request.form.get('new_group_name')
+    new_group_name = request.form.get('new_group_name').strip()
 
     if not new_group_name:
         error = 'Must fill out name to create new group'
-        groups = list(db.execute("SELECT * FROM groups WHERE user_id = ? ORDER BY groups_name", (session['user_id'],)))
-        group_items = list(db.execute("SELECT groups_items.groups_id, item.item_id, item.item_name, groups_items.quantity, item.user_id FROM item JOIN groups_items ON groups_items.item_id = item.item_id WHERE item.user_id = ? ORDER BY item_name", (session['user_id'],)))
-        users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
-        close_db()
-        return jsonify(render_template("/ajax_templates/ajax_my_groups.html", groups=groups, group_items=group_items, users_items=users_items, error=error))
         
-    app.logger.error('create group route')
-    return redirect(url_for('my_groups_data')) 
+    if not error:
+        existing_group = db.execute("SELECT * FROM groups WHERE user_id = ? AND groups_name = ? COLLATE NOCASE", (session['user_id'], new_group_name,)).fetchone()
+        if existing_group:
+            error = 'Group already exists'
+
+    if not error:    
+        db.execute("INSERT INTO groups (user_Id, groups_name) VALUES (?, ?)", (session['user_id'], new_group_name))
+        db.commit()
+        close_db()
+        return redirect(url_for('my_groups_data')) 
+    
+    groups = list(db.execute("SELECT * FROM groups WHERE user_id = ? ORDER BY groups_name", (session['user_id'],)))
+    group_items = list(db.execute("SELECT groups_items.groups_id, item.item_id, item.item_name, groups_items.quantity, item.user_id FROM item JOIN groups_items ON groups_items.item_id = item.item_id WHERE item.user_id = ? ORDER BY item_name", (session['user_id'],)))
+    users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
+    close_db()
+    return jsonify(render_template("/ajax_templates/ajax_my_groups.html", groups=groups, group_items=group_items, users_items=users_items, error=error))
+
+
+
+@app.post("/delete_group")
+@login_required
+def delete_group():
+
+    error = None
+    db = get_db()
+    group_to_delete = request.form.get('group_to_delete')
+    if not group_to_delete:
+        error = 'Error with group selected, no value found'
+
+    if not error:
+        valid_group = db.execute("SELECT * FROM groups WHERE user_id = ? AND groups_id = ?", (session['user_id'], group_to_delete)).fetchone()
+        if not valid_group:
+            error = 'Error with group trying to delete'
+    
+    if not error:
+        db.execute("DELETE FROM groups WHERE user_id = ? AND groups_id = ?", (session['user_id'], group_to_delete))
+        db.commit()
+        close_db()
+        return redirect(url_for('my_groups_data'))
+
+    groups = list(db.execute("SELECT * FROM groups WHERE user_id = ? ORDER BY groups_name", (session['user_id'],)))
+    group_items = list(db.execute("SELECT groups_items.groups_id, item.item_id, item.item_name, groups_items.quantity, item.user_id FROM item JOIN groups_items ON groups_items.item_id = item.item_id WHERE item.user_id = ? ORDER BY item_name", (session['user_id'],)))
+    users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
+    close_db()
+    return jsonify(render_template("/ajax_templates/ajax_my_groups.html", groups=groups, group_items=group_items, users_items=users_items, error=error))
+
+
+
+@app.post("/add_item_to_group")
+@login_required
+def add_item_to_group():
+
+    error = None
+
+
+    app.logger.error('add item to group')
+
 
 
 

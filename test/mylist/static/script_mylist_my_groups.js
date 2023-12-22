@@ -7,11 +7,9 @@ $(document).ready(function() {
         dataType: 'json',
         type: 'GET',
         success: function(response) {
-            console.log('success from my groups data');
             $('#my_groups_data').replaceWith(response);
         },
         error: function(response) {
-            console.log('failure from my groups data');
             location.reload();
         }
     })
@@ -21,7 +19,6 @@ $(document).on("submit", "form", function(e) {
     
     var form = $(this);
     var formId = form.attr("id");
-    console.log(formId);
     e.preventDefault();
 
     $.ajax({
