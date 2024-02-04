@@ -135,9 +135,10 @@ def add_from_group():
 
 
 
-@app.route('/add_from_group_verification', methods=['POST', 'GET'])
+# Changing group verification
+@app.route('/old_add_from_group_verification', methods=['POST', 'GET'])
 @login_required
-def add_from_group_verification():
+def old_add_from_group_verification():
 
     if request.method == 'GET':
         return redirect(url_for('edit_groups'))
@@ -159,10 +160,49 @@ def add_from_group_verification():
     app.logger.error(len(groups_items))
 
     if len(groups_items) == 0:
+        app.logger.error('Locating')
         flash('Group has no items')
         return redirect(url_for('edit_groups'))
     
     return render_template('add_from_group_verification.html', groups_items=groups_items)
+
+
+@app.post('/add_from_group_verification')
+@login_required
+def add_from_group_verification():
+
+    error = None
+    db = get_db()
+
+    group_id = request.form.get('group_id')
+    if not group_id:
+        error = 'No group id submitted'
+
+    if not error:
+        valid_group = db.execute("SELECT * FROM groups WHERE user_id = ? AND groups_id = ?", (session['user_id'], group_id)).fetchone()
+        if not valid_group:
+            error = 'Invalid group'
+
+    if not error:
+        groups_items = list(db.execute("SELECT * FROM groups_items JOIN item ON groups_items.item_id = item.item_id WHERE groups_id = ?", (group_id,)))
+        if len(groups_items) == 0:
+            error = 'Group is empty'
+
+    if error:
+        users_groups = list(db.execute("SELECT * FROM groups WHERE user_id = ?", (session['user_id'],)))
+        users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
+        user_active_items = list(db.execute("SELECT * FROM user_active_items JOIN item ON user_active_items.item_id = item.item_id WHERE user_active_items.user_id = ? ORDER BY item.item_name", (session['user_id'],)))
+        close_db()
+        app.logger.error('error found')
+        return jsonify(render_template('/ajax_templates/ajax_index.html', users_groups=users_groups, users_items=users_items, user_active_items=user_active_items, error=error))
+
+    close_db()
+    app.logger.error('no error found')
+    return jsonify(render_template('/ajax_templates/ajax_group_items_verification.html', groups_items=groups_items))
+
+
+# Changing group verification end
+
 
 
 # OLD ROUTE NO LONGER IN USE

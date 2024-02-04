@@ -1,6 +1,12 @@
 <div id="index_data">
 
     <div>
+        {% if error is defined %}
+        {{ error }}
+        {% endif %}
+    </div>
+
+    <div>
         <form id="active_list_add_item">
 
             <label for="item_to_add">Add an item to your list:</label>
@@ -11,7 +17,7 @@
                 {% endfor %}
             </datalist>
             <label for="quantity">Quantity</label>
-            <input type="number" value="1" name="quantity" id="quantity" style="width: 40px;">
+            <input type="number" value="1" name="quantity" id="quantity" style="width: 40px;" onclick="this.select();">
             <input type="submit">
         </form>
     </div>
