@@ -1,57 +1,57 @@
+<div id="index_data">
 
-<div>
-    Verify items and quantity adding to list!
     <div>
-        
+        {% if error is defined %}
+        {{ error }}
+        {% endif %}
+    </div>
 
-        <div>
+
+    Verify items and quantity adding to list!
+
+    <div>
+
+        <form id="add_from_group">
             <table>
                 <div>
-                    <p>Group {{ groups_items[0]['groups_id'] }}</p>
+                    <p>{{ group_name[0] }} Items:</p>
                 </div>
 
 
-                <form action="/add_from_group" method="post">
-                        <input type="hidden" name="groups_id" id="groups_id" value="{{ groups_items[0]['groups_id'] }}">
-                        {% for group in groups_items %}
-                        
-                        <div>
-                            
-                            <ul>
-                                <li>
-                                    <div>
-                                        <h4>
-                                            {{ group['item_name']}}
-                                        </h4>
-                                        <p>
-                                            Quantity:
-                                                <input type="number" name="{{ group['item_id'] }}" value="{{ group['quantity'] }}" style="width: 40px;">
-                                            </p>
-                                        </div>
-                                    </li>
-                                </ul>
-                                
-                                
-                            </div>
-                            
-                            {% endfor %}
-                            <input type="submit" value="Add all">
-                        </form>
-                    </p>
-                    </td>
-                    
-                    
-                    
-                </tr>
+                <div>
 
+                    <input type="hidden" name="groups_id" id="groups_id" value="{{ groups_items[0]['groups_id'] }}">
+                    {% for group in groups_items %}
+
+                    <div>
+
+                        <ul>
+                            <li>
+                                <div>
+                                    <h4>
+                                        {{ group['item_name']}}
+                                    </h4>
+                                    <p>
+                                        Quantity:
+                                        <input type="number" name="{{ group['item_id'] }}"
+                                            value="{{ group['quantity'] }}" style="width: 40px;"
+                                            onclick="this.select();">
+                                    </p>
+                                </div>
+                            </li>
+                        </ul>
+
+
+                    </div>
+
+                    {% endfor %}
+
+                    <input type="submit">
+                </div>
 
 
             </table>
-        </div>
-
-
-
-
-
+        </form>
     </div>
+
 </div>

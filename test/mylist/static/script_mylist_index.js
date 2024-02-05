@@ -43,6 +43,7 @@ function change_quantity(id) {
 
 $(document).on("submit", "form", function(e) {
     
+    console.log('test')
     var form = $(this);
     var formId = form.attr("id");
     e.preventDefault();

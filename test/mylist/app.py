@@ -87,9 +87,11 @@ def active_list_add_item():
 
 
 
-@app.route('/add_from_group', methods=['POST', 'GET'])
+# Changing group add
+
+@app.route('/old_add_from_group', methods=['POST', 'GET'])
 @login_required
-def add_from_group():
+def old_add_from_group():
 
     db = get_db()
 
@@ -132,6 +134,53 @@ def add_from_group():
     close_db()
     flash('items added')
     return redirect(url_for('index'))
+
+
+@app.post('/add_from_group')
+@login_required
+def add_from_group():
+    
+    error = None
+    db = get_db()
+    items = request.form
+
+    for key in items:
+        if key == 'groups_id':
+            groups_id = items[key]
+        else:
+            valid_item = db.execute("SELECT * FROM item WHERE user_id = ? AND item_id = ?", (session['user_id'], key,)).fetchone()
+            if not valid_item:
+                error = 'Invalid Item in submission'
+            if not error and int(items[key]) < 0:
+                error = 'Invalid quantity submitted'
+
+    if error:
+        users_groups = list(db.execute("SELECT * FROM groups WHERE user_id = ?", (session['user_id'],)))
+        users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
+        user_active_items = list(db.execute("SELECT * FROM user_active_items JOIN item ON user_active_items.item_id = item.item_id WHERE user_active_items.user_id = ? ORDER BY item.item_name", (session['user_id'],)))
+        close_db()
+        return jsonify(render_template('/ajax_templates/ajax_index.html', users_groups=users_groups, users_items=users_items, user_active_items=user_active_items, error=error))
+    
+
+    for key in items:
+        if key != 'groups_id':
+
+            item_in_list = db.execute("SELECT * FROM user_active_items WHERE user_id = ? AND item_id = ? AND groups_id = ?", (session['user_id'], key, groups_id)).fetchone()
+
+            if int(items[key]) != 0:
+                if not item_in_list:
+                    db.execute("INSERT INTO user_active_items (user_id, item_id, groups_id, active_items_quantity) VALUES (?, ?, ?, ?)", (session['user_id'], key, groups_id, int(items[key])))
+                    db.commit()
+                else:
+                    new_quantity = int(items[key]) + item_in_list['active_items_quantity']
+                    db.execute("UPDATE user_active_items SET active_items_quantity = ? WHERE user_id = ? AND item_id = ? AND groups_id = ?", (new_quantity, session['user_id'], key, groups_id))
+                    db.commit()
+
+            
+    close_db()
+    return redirect(url_for('index'))
+    
+# Changing group add end
 
 
 
@@ -196,9 +245,9 @@ def add_from_group_verification():
         app.logger.error('error found')
         return jsonify(render_template('/ajax_templates/ajax_index.html', users_groups=users_groups, users_items=users_items, user_active_items=user_active_items, error=error))
 
+    group_name = db.execute("SELECT groups_name FROM groups WHERE groups_id = ?", (group_id,)).fetchone()
     close_db()
-    app.logger.error('no error found')
-    return jsonify(render_template('/ajax_templates/ajax_group_items_verification.html', groups_items=groups_items))
+    return jsonify(render_template('/ajax_templates/ajax_group_items_verification.html', groups_items=groups_items, group_name=group_name))
 
 
 # Changing group verification end
