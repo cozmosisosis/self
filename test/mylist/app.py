@@ -144,6 +144,7 @@ def add_from_group():
     db = get_db()
     items = request.form
 
+
     for key in items:
         if key == 'groups_id':
             groups_id = items[key]
@@ -151,8 +152,16 @@ def add_from_group():
             valid_item = db.execute("SELECT * FROM item WHERE user_id = ? AND item_id = ?", (session['user_id'], key,)).fetchone()
             if not valid_item:
                 error = 'Invalid Item in submission'
-            if not error and int(items[key]) < 0:
-                error = 'Invalid quantity submitted'
+
+            if not error:
+                try:
+                    if int(items[key]) < 0:
+                        error = 'Invalid quantity submitted'
+
+                except:
+                    error = 'One item was submitted with an empty quantity section, please make sure to enter a "0" if there is an item you would not like to add.'
+
+
 
     if error:
         users_groups = list(db.execute("SELECT * FROM groups WHERE user_id = ?", (session['user_id'],)))

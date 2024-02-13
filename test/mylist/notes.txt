@@ -1,0 +1,6 @@
+// File is for bug, issues, or ideas for this project.
+
+
+FIXED   When adding items from group, if one of the quantities of items is not filled out the operation fails.
+
+        DIFFERENT ISSUE OR IDEA
