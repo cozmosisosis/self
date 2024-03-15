@@ -164,6 +164,7 @@ def add_from_group():
 
 
     if error:
+        app.logger.error('error found, should return ajax_index')
         users_groups = list(db.execute("SELECT * FROM groups WHERE user_id = ?", (session['user_id'],)))
         users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
         user_active_items = list(db.execute("SELECT * FROM user_active_items JOIN item ON user_active_items.item_id = item.item_id WHERE user_active_items.user_id = ? ORDER BY item.item_name", (session['user_id'],)))

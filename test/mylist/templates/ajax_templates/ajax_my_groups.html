@@ -1,5 +1,3 @@
-
-
 <div id="my_groups_data">
 
     <div id="ajax_error_message">
@@ -27,38 +25,6 @@
 
     <br>
 
-    <form id="add_item_to_group" action="/add_to_group">
-        
-        
-        <label for="groups">Choose A Group:</label>
-        <select name="groups" id="groups">
-            <option value="None" disabled selected>Group</option>
-
-            {% for group in groups %}
-            <option value="{{ group['groups_id'] }}">{{ group['groups_name'] }}</option>
-            {% endfor %}
-
-        </select>
-
-
-        <label for="items">Choose An Item:</label>
-        <select name="items" id="items">
-            <option value="None" disabled selected>Item</option>
-
-            {% for item in users_items %}
-            <option value="{{ item['item_id'] }}">{{ item['item_name'] }}</option>
-            {% endfor %}
-
-        </select>
-
-
-        <label for="quantity">Choose Amount:</label>
-        <input name="quantity" id="quantity" type="number" value="1">
-
-
-        <input type="submit">
-
-    </form>
 
     <table>
         <div>
@@ -100,13 +66,14 @@
                                     {{ group['item_name']}}
                                 </h4>
                                 <p>
-                                    <div id="quantity">
-                                        Quantity:
-                                        {{ group['quantity']}}
-                                        <input type="number" onchange="update_quantity(this.id);" onkeyup="update_quantity(this.id);" onclick="this.select();" 
-                                        id="{{ group['groups_items_id'] }}" name="new_quantity" value="{{ group['quantity'] }}"
-                                        style="width: 40px;">
-                                    </div>
+                                <div id="quantity">
+                                    Quantity:
+                                    {{ group['quantity']}}
+                                    <input type="number" onchange="update_quantity(this.id);"
+                                        onkeyup="update_quantity(this.id);" onclick="this.select();"
+                                        id="{{ group['groups_items_id'] }}" name="new_quantity"
+                                        value="{{ group['quantity'] }}" style="width: 40px;">
+                                </div>
                                 </p>
                             </div>
                         </li>
@@ -121,24 +88,18 @@
             </td>
 
 
-            <td>
-                <form id="edit_group">
-                    <input type="hidden" name="group_id" id="group_id" value="{{ row['groups_id'] }}">
-                    <input type="submit" value="Edit Group">
-                </form>
-            </td>
 
             <td>
-                <form action="/add_from_group_verification" method="post">
+                <form id="add_from_group_verification">
                     <input type="hidden" name="group_id" id="group_id" value="{{ row['groups_id'] }}">
                     <input type="submit" value="Add to Grocery List">
                 </form>
             </td>
-                
+
             <td>
                 <form id="delete_group">
                     <input type="hidden" name="group_to_delete" id="group_to_delete" value="{{ row['groups_id'] }}">
-                    <input type="submit" value="X">
+                    <input type="submit" value="Delete group">
                 </form>
             </td>
 
@@ -150,6 +111,35 @@
 
         </tr>
 
+            <td>
+
+                
+                <form id="add_item_to_group">
+                    
+                    
+                <input type="hidden" name="groups" id="groups" value="{{ row['groups_id'] }}">
+                
+                
+                <label for="items">Choose An Item:</label>
+            <select name="items" id="items">
+                <option value="None" disabled selected>Item</option>
+                
+                {% for item in users_items %}
+                <option value="{{ item['item_id'] }}">{{ item['item_name'] }}</option>
+                {% endfor %}
+                
+            </select>
+            
+            
+            <label for="quantity">Choose Amount:</label>
+            <input name="quantity" id="quantity" type="number" value="1">
+            
+            
+            <input type="submit">
+            
+        </form>
+    </td>
+        
 
 
         {% endfor %}
