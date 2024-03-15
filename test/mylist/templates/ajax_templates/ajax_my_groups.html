@@ -103,7 +103,8 @@
                                     <div id="quantity">
                                         Quantity:
                                         {{ group['quantity']}}
-                                        <input type="number" onchange="update_quantity(this.id);" onkeyup="update_quantity(this.id);" id="{{ group['groups_items_id'] }}" name="new_quantity" value="{{ group['quantity'] }}"
+                                        <input type="number" onchange="update_quantity(this.id);" onkeyup="update_quantity(this.id);" onclick="this.select();" 
+                                        id="{{ group['groups_items_id'] }}" name="new_quantity" value="{{ group['quantity'] }}"
                                         style="width: 40px;">
                                     </div>
                                 </p>

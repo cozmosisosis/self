@@ -485,9 +485,9 @@ def account():
 
 
 
-@app.route("/my_groups", methods=['GET', 'POST'])
+@app.route("/my_groups_old", methods=['GET', 'POST'])
 @login_required
-def my_groups():
+def my_groups_old():
 
     db = get_db()
     if request.method == 'GET':
@@ -500,21 +500,21 @@ def my_groups():
     if not new_group:
         flash('Group Name Not Filled out!')
         close_db()
-        return redirect(url_for('my_groups'))
+        return redirect(url_for('my_groups_old'))
     
     group = db.execute("SELECT * FROM groups WHERE groups_name = ? AND user_id = ?", (new_group, session['user_id'],)).fetchone()
 
     if group is not None:
         flash('Group already exists')
         close_db()
-        return redirect(url_for('my_groups'))
+        return redirect(url_for('my_groups_old'))
 
     db.execute("INSERT INTO groups (user_id, groups_name) VALUES (?,?)", (session['user_id'], new_group))  
     db.commit()
 
     flash('Group Added')
     close_db()
-    return redirect(url_for('my_groups'))
+    return redirect(url_for('my_groups_old'))
 
 
 
@@ -791,35 +791,32 @@ def edit_account_route(info_to_edit):
 
 
 
-@app.route('/change_quantity_in_group', methods=['POST', 'GET'])
+@app.post("/change_quantity_in_group")
 @login_required
 def change_quantity_in_group():
 
     db = get_db()
-    if request.method == 'GET':
-        groups = list(db.execute("SELECT * FROM groups WHERE user_id = ? ORDER BY groups_name", (session['user_id'],)))
-        group_items = list(db.execute("SELECT groups_items.groups_id, item.item_id, item.item_name, groups_items.quantity, item.user_id, groups_items.groups_items_id FROM item JOIN groups_items ON groups_items.item_id = item.item_id WHERE item.user_id = ? ORDER BY item_name", (session['user_id'],)))
-        users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
-        close_db()
-        return jsonify(render_template('/ajax_templates/ajax_edit_groups.html', groups=groups, group_items=group_items, users_items=users_items))
-
     groups_items_id = request.form.get('id')
     value = request.form.get('value')
 
     valid_groups_item = db.execute("SELECT * FROM groups_items JOIN groups ON groups_items.groups_id = groups.groups_id WHERE groups.user_id = ? AND groups_items.groups_items_id = ?", (session['user_id'], groups_items_id)).fetchone()
     if not valid_groups_item:
-        return redirect(url_for('change_quantity_in_group'))
+        app.logger.error(groups_items_id)
+        close_db()
+        return redirect(url_for('my_groups_data'))
 
     value = int(value)
     if value > 0:
         db.execute("UPDATE groups_items SET quantity = ? WHERE groups_items_id = ?", (value, groups_items_id,))
         db.commit()
-        return redirect(url_for('change_quantity_in_group'))
+        close_db()
+        return redirect(url_for('my_groups_data'))
 
     else:
         db.execute("DELETE FROM groups_items WHERE groups_items_id = ?", (groups_items_id,))
         db.commit()
-        return redirect(url_for('change_quantity_in_group'))
+        close_db()
+        return redirect(url_for('my_groups_data'))
 
 
 
@@ -1008,20 +1005,21 @@ def delete_item():
 
 
 
-@app.get("/my_groups_new")
+@app.get("/my_groups")
 @login_required
-def my_groups_new():
+def my_groups():
     
-    return render_template("/my_groups_new.html")
+    return render_template("/my_groups.html")
 
 
 
 @app.get("/my_groups_data")
 @login_required
 def my_groups_data():
+
     db = get_db()
     groups = list(db.execute("SELECT * FROM groups WHERE user_id = ? ORDER BY groups_name", (session['user_id'],)))
-    group_items = list(db.execute("SELECT groups_items.groups_id, item.item_id, item.item_name, groups_items.quantity, item.user_id FROM item JOIN groups_items ON groups_items.item_id = item.item_id WHERE item.user_id = ? ORDER BY item_name", (session['user_id'],)))
+    group_items = list(db.execute("SELECT groups_items.groups_id, item.item_id, item.item_name, groups_items.quantity, item.user_id, groups_items.groups_items_id FROM item JOIN groups_items ON groups_items.item_id = item.item_id WHERE item.user_id = ? ORDER BY item_name", (session['user_id'],)))
     users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
     close_db()
     return jsonify(render_template("/ajax_templates/ajax_my_groups.html", groups=groups, group_items=group_items, users_items=users_items))

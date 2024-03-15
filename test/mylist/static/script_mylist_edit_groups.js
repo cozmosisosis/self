@@ -1,4 +1,5 @@
 console.log('Edit groups js file loaded')
+console.log('test foraaa ch')
 
 
 $(document).ready(function() {
@@ -34,6 +35,7 @@ function update_quantity(id) {
         },
         success: function (response) {
             $('#groups_table').replaceWith(response);
+            console.log('updating quantitypp')
         },
         error:  function (response) {
             alert('Server side error with input');

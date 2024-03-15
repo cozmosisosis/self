@@ -1,0 +1,148 @@
+{% extends "loggedin_template.html" %}
+
+
+
+
+
+{% block title %}
+My Groups Page
+{% endblock %}
+
+
+
+
+
+{% block main %}
+<div>
+    My Groups Page!
+    <div>
+        <div>
+            <form action="/my_groups" method="post">
+                <table>
+                    <tr>
+                        <th>
+                            <p>Add Group</p>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td><input type="text" placeholder="New Group" autocomplete="off" name="group_name" autofocus>
+                        </td>
+                        <td>
+                            <input type="submit" value="Add">
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+
+        <div>
+            <form action="/change_group_name" method="post">
+                <table>
+                    <tr>
+                        <th>
+                            <p>Rename Group</p>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="groups_id_for_name_change">Select Group:</label>
+                            <select name="groups_id_for_name_change" id="groups_id_for_name_change">
+                                <option value="None" disabled selected>Groups</option>
+    
+                                {% for row in groups %}
+                                <option value="{{ row['groups_id'] }}">{{ row['groups_name'] }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <label for="groups_new_name">Choose new name</label>
+                            <input type="text" id="groups_new_name" name="groups_new_name" placeholder="New Name">
+                        </td>
+                        <td>
+                            <input type="submit">
+                        </td>
+                    </tr>
+                </table>
+        </div>
+
+        <div>
+            <table>
+                <div>
+                    <p>My Groups</p>
+                </div>
+                <tr>
+                    <th>
+                        <p>Group Name</p>
+                    </th>
+
+                </tr>
+
+
+                {% for row in groups %}
+
+
+
+
+
+                <tr>
+
+                    <td>{{ row['groups_name'] }}
+
+                        {% for group in group_items %}
+                        {% if group['groups_name'] == row['groups_name'] %}
+                        <div>
+
+                            Ingredient: 
+                            {{ group['item_name']}}
+                            
+                            Quantity: 
+                            {{ group['quantity']}}
+                        </div>
+                            
+                        {% endif %}
+                        {% endfor %}
+                    </td>
+
+
+
+
+
+
+
+                    <td>
+                        <form action="/remove_group" method="post">
+                            <input type="hidden" name="groups_id" value="{{ row['groups_id'] }}">
+                            <input type="submit" value="Remove">
+                        </form>
+                    </td>
+                </tr>
+
+
+
+                {% endfor %}
+            </table>
+        </div>
+
+
+        <div>
+
+            <br>
+
+
+        
+
+
+
+
+
+
+
+        </div>
+
+
+    </div>
+</div>
+
+
+
+{% endblock %}
