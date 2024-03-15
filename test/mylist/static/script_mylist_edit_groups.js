@@ -42,3 +42,24 @@ function update_quantity(id) {
     });
     return false;
 }
+
+$(document).on("submit", "form", function(e) {
+    
+    console.log('test')
+    var form = $(this);
+    var formId = form.attr("id");
+    e.preventDefault();
+
+    $.ajax({
+        url: $SCRIPT_ROOT + '/' + formId,
+        dataType: 'json',
+        type: 'POST',
+        data: form.serialize(),
+        success: function(response) {
+            $('#groups_table').replaceWith(response);
+        },
+        error: function(response) {
+            location.reload();
+        }
+    })
+})

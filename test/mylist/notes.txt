@@ -3,4 +3,11 @@
 
 FIXED   When adding items from group, if one of the quantities of items is not filled out the operation fails.
 
+        Error caused by mixing up my groups and edit groups resources seen when adding item to group from edit group page.
+        Combine pages edit groups and my groups into one page.
+        Adding all ingredients button doesnt work.
+        Change method for updating page data, change from replacewith function to innerHTML to avoid repetation of div with id tag.
+        Extrapolate functions out ex: item/group verification. 
+        Give error page its own route.
+
         DIFFERENT ISSUE OR IDEA

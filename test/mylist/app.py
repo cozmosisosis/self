@@ -599,6 +599,7 @@ def edit_groups():
 @login_required
 def add_to_group():
 
+    app.logger.error("old add to group route")
     db = get_db()
     if request.method == 'GET':
         close_db()
@@ -1090,12 +1091,52 @@ def delete_group():
 @login_required
 def add_item_to_group():
 
+    app.logger.error("new add item to group")
     error = None
+    db = get_db()
+    
+    selected_group = request.form.get('groups')
+    selected_item = request.form.get('items')
+    inputed_quantity = request.form.get('quantity')
 
 
-    app.logger.error('add item to group')
+    if not selected_group or not selected_item or not inputed_quantity:
+        error = 'Must select group, item to add and a valid quantity (greater than 0)'
+    
+    if not error:
+        inputed_quantity = int(inputed_quantity)
+        if inputed_quantity <= 0:
+            error = 'Must input a valid quantity (greater than 0)'
 
 
+    if not error:
+        users_item = db.execute("SELECT * FROM item WHERE item_id = ? and user_id = ?", (selected_item, session['user_id'],)).fetchone()
+        users_group = db.execute("SELECT * FROM groups WHERE groups_id = ? and user_id = ?", (selected_group, session['user_id'],)).fetchone()
+        if users_item is None or users_group is None:
+            error = 'Error occured with either item submitted or group submitted to. No link to user'
+    
+    if not error:
+        ingredient_is_in_groups_items = db.execute("SELECT * FROM groups_items WHERE groups_id = ? AND item_id = ?", (selected_group, selected_item,)).fetchone()
+        if not ingredient_is_in_groups_items:
+            db.execute("INSERT INTO groups_items (groups_id, item_id, quantity) VALUES (?, ?, ?)", (selected_group, selected_item, inputed_quantity))
+            db.commit()
+            close_db()
+            return redirect(url_for('my_groups_data'))
+
+    if not error:
+        old_quantity = ingredient_is_in_groups_items['quantity']
+        new_quantity = inputed_quantity + old_quantity
+        db.execute("UPDATE groups_items SET quantity = ? WHERE groups_id = ? AND item_id = ?", (new_quantity, selected_group, selected_item,))
+        db.commit()
+        close_db()
+        return redirect(url_for('my_groups_data'))
+
+    groups = list(db.execute("SELECT * FROM groups WHERE user_id = ? ORDER BY groups_name", (session['user_id'],)))
+    group_items = list(db.execute("SELECT groups_items.groups_id, item.item_id, item.item_name, groups_items.quantity, item.user_id FROM item JOIN groups_items ON groups_items.item_id = item.item_id WHERE item.user_id = ? ORDER BY item_name", (session['user_id'],)))
+    users_items = list(db.execute("SELECT * FROM item WHERE user_id = ? ORDER BY item_name", (session['user_id'],)))
+    close_db()
+    return jsonify(render_template("/ajax_templates/ajax_my_groups.html", groups=groups, group_items=group_items, users_items=users_items, error=error))
+    
 
 
 
